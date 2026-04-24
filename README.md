@@ -1,5 +1,14 @@
 # Group Expense Splitter
 
+## Run
+
+Prefrably inside a python3 venv
+
+```bash
+python3 -m pip install -r requirements.txt
+python3 app.py
+```
+
 ## Description
 Group Expense Splitter is a collaborative web application that helps groups of users track shared expenses and settle costs fairly. Users can create an account, create or join a group, add expenses, and view a shared dashboard showing group spending.
 
