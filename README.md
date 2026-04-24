@@ -1,5 +1,7 @@
 # Group Expense Splitter
 
+> Note that I'm still yet to test for bugs and security issues in implemntation. Ill open pr once done so.
+
 ## Run
 
 Prefrably inside a python3 venv
