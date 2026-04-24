@@ -7,10 +7,18 @@ from models import db, User
 login_manager = LoginManager()
 
 def create_app():
-    app = Flask(__name__, template_folder='frontendCode', static_folder='frontendCode')
+    app = Flask(
+        __name__,
+        template_folder='frontendCode',
+        static_folder='frontendCode',
+        instance_relative_config=True
+    )
+    
+    os.makedirs(app.instance_path, exist_ok=True)
+    database_path = os.path.join(app.instance_path, 'database.db')
     
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{database_path}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=14)
