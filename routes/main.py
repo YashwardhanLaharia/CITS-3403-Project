@@ -1,4 +1,4 @@
-from flask import render_template, send_from_directory, redirect, abort
+from flask import send_from_directory, redirect
 from flask_login import current_user, login_required
 from routes import main_bp
 import os
