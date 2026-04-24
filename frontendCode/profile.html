@@ -13,7 +13,7 @@
 
 <!-- ── SIDEBAR ── -->
 <aside class="sidebar">
-  <div class="sidebar-logo">Split<span>Mate</span></div>
+  <a href="/index" class="sidebar-logo">Split<span>Mate</span></a>
 
   <div class="sidebar-section-label">My Groups</div>
 
@@ -46,7 +46,7 @@
   </button>
 
   <div class="sidebar-bottom">
-    <a href="#" class="nav-item-btn active"><i class="bi bi-person-circle"></i> Profile</a>
+    <a href="/profile" class="nav-item-btn active"><i class="bi bi-person-circle"></i> Profile</a>
     <a href="#" class="nav-item-btn"><i class="bi bi-question-circle"></i> Help</a>
     <form action="/api/logout" method="POST" style="display:contents;">
       <button type="submit" class="nav-item-btn" style="color:var(--danger); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
@@ -77,63 +77,89 @@
   <div class="page-body" style="max-width:680px">
 
     <!-- ── SECTION 1: PROFILE DETAILS ── -->
-    <div class="form-card" style="margin-bottom:24px">
-      <div class="form-card-title"><i class="bi bi-person-fill"></i> Profile Details</div>
+    <form action="/api/user" method="POST">
+      <div class="form-card" style="margin-bottom:24px">
+        <div class="form-card-title"><i class="bi bi-person-fill"></i> Profile Details</div>
 
-      <!-- Avatar row -->
-      <div class="profile-avatar-row">
-        <div class="profile-avatar" id="profile-avatar-initials">...</div>
-        <div>
-          <div id="profile-name-display" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text-primary)">...</div>
-          <div class="profile-avatar-meta" id="member-since">Member since ...</div>
+        <!-- Avatar row -->
+        <div class="profile-avatar-row">
+          <div class="profile-avatar" id="profile-avatar-initials">...</div>
+          <div>
+            <div id="profile-name-display" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text-primary)">...</div>
+            <div class="profile-avatar-meta" id="member-since">Member since ...</div>
+          </div>
+        </div>
+
+        <!-- First Name -->
+        <div class="field-group">
+          <label class="form-label-sm" for="first-name">First Name</label>
+          <input class="form-input" type="text" id="first-name" name="first_name" placeholder="First name"/>
+        </div>
+
+        <!-- Last Name -->
+        <div class="field-group">
+          <label class="form-label-sm" for="last-name">Last Name</label>
+          <input class="form-input" type="text" id="last-name" name="last_name" placeholder="Last name"/>
+        </div>
+
+        <!-- Email -->
+        <div class="field-group">
+          <label class="form-label-sm" for="profile-email">Email Address</label>
+          <input class="form-input" type="email" id="profile-email" placeholder="your@email.com" readonly/>
+        </div>
+
+        <div style="margin-top:24px">
+          <button type="submit" class="btn-primary-action">
+            <i class="bi bi-check-lg"></i> Save Profile
+          </button>
         </div>
       </div>
+    </form>
 
-      <!-- Display name -->
-      <div class="field-group">
-        <label class="form-label-sm" for="profile-name">Display Name</label>
-        <input class="form-input" type="text" id="profile-name" placeholder="Your name"/>
-      </div>
-
-      <!-- Email -->
-      <div class="field-group">
-        <label class="form-label-sm" for="profile-email">Email Address</label>
-        <input class="form-input" type="email" id="profile-email" placeholder="your@email.com" readonly/>
-      </div>
-
-      <!-- Password divider -->
-      <div class="profile-section-gap">
-        <div class="form-label-sm" style="color:var(--text-dim);margin-bottom:14px;font-size:0.6rem">CHANGE PASSWORD</div>
+    <!-- ── SECTION 2: CHANGE PASSWORD ── -->
+    <form action="/api/user/password" method="POST">
+      <div class="form-card" style="margin-bottom:24px">
+        <div class="form-card-title"><i class="bi bi-lock-fill"></i> Change Password</div>
 
         <div class="field-group">
-          <label class="form-label-sm" for="profile-current-pw">Current Password</label>
+          <label class="form-label-sm" for="current-password">Current Password</label>
           <div class="pw-wrap">
-            <input class="form-input" type="password" id="profile-current-pw" placeholder="Enter current password"/>
-            <button type="button" class="pw-toggle" onclick="togglePw('profile-current-pw','icon-cur')" aria-label="Toggle">
+            <input class="form-input" type="password" id="current-password" name="current_password" placeholder="Enter current password"/>
+            <button type="button" class="pw-toggle" onclick="togglePw('current-password','icon-cur')" aria-label="Toggle">
               <i class="bi bi-eye" id="icon-cur"></i>
             </button>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="form-label-sm" for="profile-new-pw">New Password</label>
+          <label class="form-label-sm" for="new-password">New Password</label>
           <div class="pw-wrap">
-            <input class="form-input" type="password" id="profile-new-pw" placeholder="Enter new password"/>
-            <button type="button" class="pw-toggle" onclick="togglePw('profile-new-pw','icon-new')" aria-label="Toggle">
+            <input class="form-input" type="password" id="new-password" name="new_password" placeholder="Enter new password"/>
+            <button type="button" class="pw-toggle" onclick="togglePw('new-password','icon-new')" aria-label="Toggle">
               <i class="bi bi-eye" id="icon-new"></i>
             </button>
           </div>
         </div>
-      </div>
 
-      <div style="margin-top:24px">
-        <button class="btn-primary-action">
-          <i class="bi bi-check-lg"></i> Save Changes
-        </button>
-      </div>
-    </div>
+        <div class="field-group">
+          <label class="form-label-sm" for="confirm-password">Confirm New Password</label>
+          <div class="pw-wrap">
+            <input class="form-input" type="password" id="confirm-password" name="confirm_password" placeholder="Confirm new password"/>
+            <button type="button" class="pw-toggle" onclick="togglePw('confirm-password','icon-conf')" aria-label="Toggle">
+              <i class="bi bi-eye" id="icon-conf"></i>
+            </button>
+          </div>
+        </div>
 
-    <!-- ── SECTION 2: MY GROUPS SUMMARY ── -->
+        <div style="margin-top:24px">
+          <button type="submit" class="btn-primary-action">
+            <i class="bi bi-key-fill"></i> Change Password
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- ── SECTION 3: MY GROUPS SUMMARY ── -->
     <div class="form-card">
       <div class="form-card-title"><i class="bi bi-people-fill"></i> My Groups</div>
 
@@ -185,6 +211,29 @@
     icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
   }
 
+  function showAlert(message, alertType) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-' + alertType + ' alert-dismissible fade show';
+    alertDiv.role = 'alert';
+    alertDiv.textContent = message;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'btn-close';
+    closeBtn.setAttribute('data-bs-dismiss', 'alert');
+
+    alertDiv.appendChild(closeBtn);
+    document.querySelector('.page-body').prepend(alertDiv);
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error')) {
+    showAlert(params.get('error'), 'danger');
+  }
+  if (params.get('success')) {
+    showAlert(params.get('success'), 'success');
+  }
+
   fetch('/api/user')
     .then(res => res.json())
     .then(data => {
@@ -193,7 +242,8 @@
         document.getElementById('profile-avatar').textContent = initials;
         document.getElementById('profile-avatar-initials').textContent = initials;
         document.getElementById('profile-name-display').textContent = data.first_name + ' ' + data.last_name;
-        document.getElementById('profile-name').value = data.first_name + ' ' + data.last_name;
+        document.getElementById('first-name').value = data.first_name;
+        document.getElementById('last-name').value = data.last_name;
         document.getElementById('profile-email').value = data.email;
         const date = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
         document.getElementById('member-since').textContent = 'Member since ' + date;

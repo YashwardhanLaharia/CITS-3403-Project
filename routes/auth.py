@@ -74,3 +74,42 @@ def get_user():
             'last_name': current_user.last_name
         })
     return jsonify({'authenticated': False})
+
+@auth_bp.route('/user', methods=['PUT'])
+@login_required
+def update_user():
+    first_name = request.form.get('first_name', '').strip()
+    last_name = request.form.get('last_name', '').strip()
+    
+    if not first_name or not last_name:
+        return redirect_with_message('/profile', error='First name and last name are required')
+    
+    current_user.first_name = first_name
+    current_user.last_name = last_name
+    db.session.commit()
+    
+    return redirect_with_message('/profile', success='Profile updated successfully')
+
+@auth_bp.route('/user/password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password', '')
+    new_password = request.form.get('new_password', '')
+    confirm_password = request.form.get('confirm_password', '')
+    
+    if not current_user.check_password(current_password):
+        return redirect_with_message('/profile', error='Current password is incorrect')
+    
+    if not new_password:
+        return redirect_with_message('/profile', error='New password is required')
+    
+    if new_password != confirm_password:
+        return redirect_with_message('/profile', error='New passwords do not match')
+    
+    if len(new_password) < 8:
+        return redirect_with_message('/profile', error='New password must be at least 8 characters')
+    
+    current_user.set_password(new_password)
+    db.session.commit()
+    logout_user()
+    return redirect_with_message('/login', success='Password changed successfully. Please log in with your new password.')
