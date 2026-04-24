@@ -1,1 +1,5 @@
+.gitignore
 checkpoint2.txt
+.git
+venv/
+__pycache__/

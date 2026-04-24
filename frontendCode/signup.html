@@ -43,7 +43,7 @@
     <div class="login-heading">Create an account</div>
     <div class="login-sub">Join SplitMate — it's free, always.</div>
 
-    <form>
+    <form action="/api/register" method="POST">
       <!-- Name row -->
       <div class="field-row-2 field-group">
         <div>
@@ -52,7 +52,8 @@
             class="form-input"
             type="text"
             id="first-name"
-            placeholder="Aman"
+            name="first_name"
+            placeholder="John"
             autocomplete="given-name"
           />
         </div>
@@ -62,7 +63,8 @@
             class="form-input"
             type="text"
             id="last-name"
-            placeholder="Sohail"
+            name="last_name"
+            placeholder="Doe"
             autocomplete="family-name"
           />
         </div>
@@ -71,13 +73,14 @@
       <!-- Email -->
       <div class="field-group">
         <label class="form-label-sm" for="email">Email Address</label>
-        <input
-          class="form-input"
-          type="email"
-          id="email"
-          placeholder="you@example.com"
-          autocomplete="email"
-        />
+<input
+            class="form-input"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
       </div>
 
       <!-- Password -->
@@ -88,6 +91,7 @@
             class="form-input"
             type="password"
             id="password"
+            name="password"
             placeholder="Create a strong password"
             autocomplete="new-password"
             oninput="checkStrength(this.value)"
@@ -113,6 +117,7 @@
             class="form-input"
             type="password"
             id="confirm-password"
+            name="confirm-password"
             placeholder="Repeat your password"
             autocomplete="new-password"
             oninput="checkMatch()"
@@ -141,7 +146,7 @@
     <div class="login-divider"><span>already have an account?</span></div>
 
     <div class="signup-row">
-      <a href="login.html">Log in instead</a>
+      <a href="/login">Log in instead</a>
     </div>
 
   </div>
@@ -193,6 +198,26 @@
       hint.textContent = 'Passwords do not match';
       hint.className   = 'match-hint fail';
     }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error')) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = params.get('error') + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      document.querySelector('.login-card').prepend(alertDiv);
+    });
+  }
+  if (params.get('success')) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success alert-dismissible fade show';
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = params.get('success') + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      document.querySelector('.login-card').prepend(alertDiv);
+    });
   }
 </script>
 </body>

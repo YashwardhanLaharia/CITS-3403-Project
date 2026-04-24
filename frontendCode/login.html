@@ -43,7 +43,7 @@
     <div class="login-heading">Welcome back</div>
     <div class="login-sub">Log in to your SplitMate account to continue.</div>
 
-    <form>
+    <form action="/api/login" method="POST">
       <!-- Email -->
       <div class="field-group">
         <label class="form-label-sm" for="email">Email Address</label>
@@ -51,6 +51,7 @@
           class="form-input"
           type="email"
           id="email"
+          name="email"
           placeholder="you@example.com"
           autocomplete="email"
         />
@@ -64,6 +65,7 @@
             class="form-input"
             type="password"
             id="password"
+            name="password"
             placeholder="Enter your password"
             autocomplete="current-password"
           />
@@ -76,7 +78,7 @@
       <!-- Remember / Forgot -->
       <div class="check-row">
         <label class="check-label">
-          <input type="checkbox" id="remember"/>
+          <input type="checkbox" id="remember" name="remember"/>
           Remember me
         </label>
         <a href="#" class="forgot-link">Forgot password?</a>
@@ -91,7 +93,7 @@
     <div class="login-divider"><span>or</span></div>
 
     <div class="signup-row">
-      Don't have an account? <a href="#">Sign up for free</a>
+      Don't have an account? <a href="/signup">Sign up for free</a>
     </div>
 
   </div>
@@ -105,6 +107,26 @@
     const isHidden = input.type === 'password';
     input.type = isHidden ? 'text' : 'password';
     icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+  }
+  
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error')) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = params.get('error') + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      document.querySelector('.login-card').prepend(alertDiv);
+    });
+  }
+  if (params.get('success')) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success alert-dismissible fade show';
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = params.get('success') + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      document.querySelector('.login-card').prepend(alertDiv);
+    });
   }
 </script>
 </body>
