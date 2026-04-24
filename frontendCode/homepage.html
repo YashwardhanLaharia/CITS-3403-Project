@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SplitMate – Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+  
+  <link rel = "stylesheet" href="styles.css">
+
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Split<span>Mate</span></div>
+
+  <div class="sidebar-section-label">Navigation</div>
+  <a href="#" class="nav-item-btn active"><i class="bi bi-house"></i> Home</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-receipt"></i> Expenses</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-activity"></i> Activity</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-arrow-left-right"></i> Settlements</a>
+
+  <button class="add-expense-btn">
+    <i class="bi bi-plus-lg"></i> Add Expense
+  </button>
+
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item-btn"><i class="bi bi-person-circle"></i> Profile</a>
+    <a href="#" class="nav-item-btn"><i class="bi bi-question-circle"></i> Help</a>
+    <a href="#" class="nav-item-btn" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main-content">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="search-bar">
+      <i class="bi bi-search"></i>
+      Search groups…
+    </div>
+    <div class="topnav-icons">
+      <div class="icon-btn"><i class="bi bi-bell"></i></div>
+      <div class="icon-btn"><i class="bi bi-gear"></i></div>
+      <div class="avatar-sm">SJ</div>
+    </div>
+  </nav>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- WELCOME -->
+    <div class="welcome-row">
+      <div>
+        <div class="welcome-title">Welcome back,<br>Aman.</div>
+        <div class="welcome-sub">Manage your shared expenses and keep things fair across all your groups.</div>
+      </div>
+      <div class="net-balance-card">
+        <div class="net-balance-label">Net Balance (All Groups)</div>
+        <div class="net-balance-amount" style="color:var(--accent)">+$6767</div>
+        <div class="net-balance-sub">You are owed across 2 active groups</div>
+      </div>
+    </div>
+
+    <!-- ACTION ROW -->
+    <div class="action-row">
+
+      <!-- CREATE GROUP -->
+      <div class="form-card">
+        <div class="form-card-title"><i class="bi bi-people-fill"></i> Create a New Group</div>
+        <div class="form-row-2">
+          <div>
+            <label class="form-label-sm">Group Name</label>
+            <input class="form-input" type="text" placeholder="e.g. Summer Roadtrip"/>
+          </div>
+          <div>
+            <label class="form-label-sm">Currency</label>
+            <select class="form-select">
+              <option>AUD ($)</option>
+              <option>USD ($)</option>
+              <option>EUR (€)</option>
+              <option>GBP (£)</option>
+            </select>
+          </div>
+        </div>
+        <label class="form-label-sm">Invite Members (Email)</label>
+        <div class="invite-row">
+          <input class="form-input" type="email" placeholder="friend@example.com"/>
+          <button class="btn-add-member">Add</button>
+        </div>
+        <button class="btn-primary-action">
+          <i class="bi bi-plus-circle-fill"></i> Create Group
+        </button>
+      </div>
+
+      <!-- JOIN GROUP -->
+      <div class="join-card">
+        <div class="join-card-title"><i class="bi bi-link-45deg"></i> Join a Group</div>
+        <div class="join-card-sub">Have an invite code? Enter it below to join an existing group.</div>
+        <div class="code-input-wrap">
+          <input class="code-input" type="text" placeholder="X7-R92-K4" maxlength="10"/>
+        </div>
+        <button class="btn-join"><i class="bi bi-arrow-right-circle"></i> Join Now</button>
+        <div class="join-recent">
+          <div class="mini-avatars">
+            <div class="mini-avatar" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+            <div class="mini-avatar" style="background:linear-gradient(135deg,#fb923c,#c2410c)">MT</div>
+          </div>
+          4 friends joined groups this week
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVE GROUPS -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Active Groups</div>
+        <div class="section-sub">Ongoing shared expense spaces</div>
+      </div>
+      <a href="#" class="view-all-link">View All <i class="bi bi-chevron-right"></i></a>
+    </div>
+
+    <div class="groups-grid">
+
+      <!-- Group 1 -->
+      <div class="group-card green">
+        <div class="group-card-top">
+          <div class="group-icon" style="background:rgba(61,217,164,0.12)">🏠</div>
+          <span class="status-badge active">Active</span>
+        </div>
+        <div class="group-card-name">Margaret River '26</div>
+        <div class="group-card-meta">3 Members · $12,400 Total Spent</div>
+        <div class="group-card-footer">
+          <div>
+            <div class="group-member-avatars">
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">SJ</div>
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#a78bfa,#6d28d9)">TK</div>
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#60a5fa,#1d4ed8)">RM</div>
+            </div>
+          </div>
+          <div class="group-balance positive">You're owed $340</div>
+          <i class="bi bi-chevron-right card-arrow"></i>
+        </div>
+      </div>
+
+      <!-- Group 2 -->
+      <div class="group-card purple">
+        <div class="group-card-top">
+          <div class="group-icon" style="background:rgba(167,139,250,0.12)">✈️</div>
+          <span class="status-badge active">Active</span>
+        </div>
+        <div class="group-card-name">Iceland Trip '24</div>
+        <div class="group-card-meta">5 Members · $3,500 Total Spent</div>
+        <div class="group-card-footer">
+          <div class="group-member-avatars">
+            <div class="mini-avatar" style="background:linear-gradient(135deg,#a78bfa,#6d28d9)">SJ</div>
+            <div class="mini-avatar" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+            <div class="mini-avatar" style="background:linear-gradient(135deg,#fb923c,#c2410c)">+3</div>
+          </div>
+          <div class="group-balance negative">You owe $85</div>
+          <i class="bi bi-chevron-right card-arrow"></i>
+        </div>
+      </div>
+
+      <!-- Group 3 -->
+
+
+    </div>
+
+    <!-- ARCHIVED -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Archived</div>
+        <div class="section-sub">Closed and settled groups</div>
+      </div>
+    </div>
+
+    <div class="archived-grid">
+      <div class="archived-card">
+        <div class="archived-icon">🏖️</div>
+        <div>
+          <div class="archived-name">Berlin Weekend</div>
+          <div class="archived-meta">Closed Sep 2023 · All settled</div>
+        </div>
+        <i class="bi bi-chevron-right" style="margin-left:auto;color:var(--text-dim);font-size:0.8rem"></i>
+      </div>
+      <div class="archived-card">
+        <div class="archived-icon">🎁</div>
+        <div>
+          <div class="archived-name">Wedding Gift – Tom</div>
+          <div class="archived-meta">Closed Jun 2023 · All settled</div>
+        </div>
+        <i class="bi bi-chevron-right" style="margin-left:auto;color:var(--text-dim);font-size:0.8rem"></i>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
