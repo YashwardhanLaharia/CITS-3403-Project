@@ -1,5 +1,5 @@
 from flask import request, redirect, jsonify
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user
 from models import db, User
 from routes import auth_bp
 import urllib.parse
