@@ -1,0 +1,6 @@
+# Database
+instance/
+
+# Python
+__pycache__/
+venv/
