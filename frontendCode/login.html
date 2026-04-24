@@ -110,23 +110,31 @@
   }
   
   const params = new URLSearchParams(window.location.search);
-  if (params.get('error')) {
+
+  function showAlert(message, alertType) {
     document.addEventListener('DOMContentLoaded', function() {
       const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      const closeButton = document.createElement('button');
+
+      alertDiv.className = 'alert alert-' + alertType + ' alert-dismissible fade show';
       alertDiv.role = 'alert';
-      alertDiv.innerHTML = params.get('error') + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      alertDiv.textContent = message;
+
+      closeButton.type = 'button';
+      closeButton.className = 'btn-close';
+      closeButton.setAttribute('data-bs-dismiss', 'alert');
+      closeButton.setAttribute('aria-label', 'Close');
+
+      alertDiv.appendChild(closeButton);
       document.querySelector('.login-card').prepend(alertDiv);
     });
   }
+
+  if (params.get('error')) {
+    showAlert(params.get('error'), 'danger');
+  }
   if (params.get('success')) {
-    document.addEventListener('DOMContentLoaded', function() {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.role = 'alert';
-      alertDiv.innerHTML = params.get('success') + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-      document.querySelector('.login-card').prepend(alertDiv);
-    });
+    showAlert(params.get('success'), 'success');
   }
 </script>
 </body>
