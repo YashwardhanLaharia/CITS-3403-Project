@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SplitMate – Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Split<span>Mate</span></div>
+
+  <div class="sidebar-section-label">My Groups</div>
+
+  <div class="group-item active">
+    <span class="group-dot" style="background:#3dd9a4"></span>
+    Holiday in Paris
+  </div>
+  <div class="group-item">
+    <span class="group-dot" style="background:#a78bfa"></span>
+    Apartment 4B
+  </div>
+  <div class="group-item">
+    <span class="group-dot" style="background:#fb923c"></span>
+    Weekend Road Trip
+  </div>
+
+  <button class="add-expense-btn" style="margin-top:12px; background:none; border:1px dashed var(--border); color:var(--text-muted); font-weight:500;">
+    <i class="bi bi-plus"></i> New Group
+  </button>
+
+  <div class="sidebar-section-label" style="margin-top:10px;">Navigation</div>
+
+  <a href="#" class="nav-item-btn active"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-receipt"></i> Expenses</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-activity"></i> Activity</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-arrow-left-right"></i> Settlements</a>
+
+  <button class="add-expense-btn">
+    <i class="bi bi-plus-lg"></i> Add Expense
+  </button>
+
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item-btn"><i class="bi bi-question-circle"></i> Help</a>
+    <a href="#" class="nav-item-btn" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main-content">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="topnav-group">Holiday in Paris</div>
+    <div class="search-bar">
+      <i class="bi bi-search"></i>
+      Search expenses…
+    </div>
+    <div class="topnav-icons">
+      <div class="icon-btn"><i class="bi bi-bell"></i></div>
+      <div class="icon-btn"><i class="bi bi-gear"></i></div>
+      <div class="avatar-sm">AC</div>
+    </div>
+  </nav>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- HERO -->
+    <div class="group-hero">
+      <div>
+        <div class="hero-badge">
+          <i class="bi bi-calendar3"></i> Jul 5 – Jul 22, 2024 &nbsp;·&nbsp; Active
+        </div>
+        <div class="hero-title">Holiday in Paris</div>
+        <div class="hero-desc">Shared memories, croissants, and museum passes. Tracking the collective flow of exploration in the City of Light.</div>
+      </div>
+      <div class="spending-card">
+        <div class="spending-label">Total Group Spending</div>
+        <div class="spending-amount"><sup>€</sup>4,280<small style="font-size:1rem;font-weight:400;color:var(--text-muted)">.50</small></div>
+        <div class="member-avatars">
+          <div class="avatar-sm" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+          <div class="avatar-sm" style="background:linear-gradient(135deg,#a78bfa,#6d28d9)">SM</div>
+          <div class="avatar-sm" style="background:linear-gradient(135deg,#fb923c,#c2410c)">MT</div>
+          <div class="avatar-sm" style="background:linear-gradient(135deg,#60a5fa,#1d4ed8)">JW</div>
+        </div>
+        <div style="margin-top:14px">
+          <button class="view-split-btn"><i class="bi bi-calculator"></i> View Split</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD GRID -->
+    <div class="dashboard-grid">
+      <div>
+
+        <!-- MEMBERS -->
+        <div class="section-header">
+          <div class="section-title">Group Members</div>
+          <div class="section-more"><i class="bi bi-three-dots"></i></div>
+        </div>
+
+        <div class="members-grid">
+          <!-- Member 1 -->
+          <div class="member-card">
+            <div class="member-card-top">
+              <div class="member-info">
+                <div class="avatar-md" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+                <div>
+                  <div class="member-name">Alex Chen</div>
+                  <div class="member-spent">Total paid: €1,250</div>
+                </div>
+              </div>
+              <div class="balance-pill receives">+€120</div>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:29%;background:linear-gradient(90deg,#3dd9a4,#1a8a60)"></div>
+            </div>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="member-card">
+            <div class="member-card-top">
+              <div class="member-info">
+                <div class="avatar-md" style="background:linear-gradient(135deg,#a78bfa,#6d28d9)">SM</div>
+                <div>
+                  <div class="member-name">Sarah Miller</div>
+                  <div class="member-spent">Total paid: €1,400</div>
+                </div>
+              </div>
+              <div class="balance-pill receives">+€340</div>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:33%;background:linear-gradient(90deg,#a78bfa,#6d28d9)"></div>
+            </div>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="member-card">
+            <div class="member-card-top">
+              <div class="member-info">
+                <div class="avatar-md" style="background:linear-gradient(135deg,#fb923c,#c2410c)">MT</div>
+                <div>
+                  <div class="member-name">Marcus Thorne</div>
+                  <div class="member-spent">Total paid: €620</div>
+                </div>
+              </div>
+              <div class="balance-pill owes">–€450</div>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:15%;background:linear-gradient(90deg,#fb923c,#c2410c)"></div>
+            </div>
+          </div>
+
+          <!-- Member 4 -->
+          <div class="member-card">
+            <div class="member-card-top">
+              <div class="member-info">
+                <div class="avatar-md" style="background:linear-gradient(135deg,#60a5fa,#1d4ed8)">JW</div>
+                <div>
+                  <div class="member-name">Jordan Wu</div>
+                  <div class="member-spent">Total paid: €1,010</div>
+                </div>
+              </div>
+              <div class="balance-pill owes">–€10</div>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:24%;background:linear-gradient(90deg,#60a5fa,#1d4ed8)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT FLOW -->
+        <div class="section-header">
+          <div class="section-title">Recent Flow</div>
+          <div class="section-more">View all <i class="bi bi-chevron-right"></i></div>
+        </div>
+
+        <div class="flow-table">
+          <div class="flow-table-header">
+            <div>Expense Details</div>
+            <div>Paid By</div>
+            <div>Split</div>
+            <div style="text-align:right">Amount</div>
+          </div>
+
+          <div class="flow-row">
+            <div class="flow-expense-info">
+              <div class="expense-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24">🍽️</div>
+              <div>
+                <div class="expense-name">Le Comptoir Dinner</div>
+                <div class="expense-date">3 hours ago</div>
+              </div>
+            </div>
+            <div class="payer-chip">
+              <div class="payer-dot" style="background:linear-gradient(135deg,#60a5fa,#1d4ed8)">JW</div>
+              Jordan Wu
+            </div>
+            <div><span class="split-badge equal">Equally (4)</span></div>
+            <div class="flow-amount">€245.00</div>
+          </div>
+
+          <div class="flow-row">
+            <div class="flow-expense-info">
+              <div class="expense-icon" style="background:rgba(96,165,250,0.12);color:#60a5fa">🚆</div>
+              <div>
+                <div class="expense-name">Eurostar Tickets</div>
+                <div class="expense-date">Yesterday</div>
+              </div>
+            </div>
+            <div class="payer-chip">
+              <div class="payer-dot" style="background:linear-gradient(135deg,#a78bfa,#6d28d9)">SM</div>
+              Sarah Miller
+            </div>
+            <div><span class="split-badge custom">Custom Split</span></div>
+            <div class="flow-amount">€890.00</div>
+          </div>
+
+          <div class="flow-row">
+            <div class="flow-expense-info">
+              <div class="expense-icon" style="background:rgba(61,217,164,0.12);color:#3dd9a4">🎨</div>
+              <div>
+                <div class="expense-name">Louvre Group Tour</div>
+                <div class="expense-date">2 days ago</div>
+              </div>
+            </div>
+            <div class="payer-chip">
+              <div class="payer-dot" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+              Alex Chen
+            </div>
+            <div><span class="split-badge equal">Equally (4)</span></div>
+            <div class="flow-amount">€120.50</div>
+          </div>
+
+          <div class="flow-row">
+            <div class="flow-expense-info">
+              <div class="expense-icon" style="background:rgba(251,146,60,0.12);color:#fb923c">🏨</div>
+              <div>
+                <div class="expense-name">Hotel Riviera – Night 3</div>
+                <div class="expense-date">3 days ago</div>
+              </div>
+            </div>
+            <div class="payer-chip">
+              <div class="payer-dot" style="background:linear-gradient(135deg,#a78bfa,#6d28d9)">SM</div>
+              Sarah Miller
+            </div>
+            <div><span class="split-badge equal">Equally (4)</span></div>
+            <div class="flow-amount">€560.00</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+
+        <!-- DISTRIBUTION -->
+        <div class="distribution-card">
+          <div class="section-title">Expense Distribution</div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#1f2640" stroke-width="14"/>
+              <!-- Accommodation 56% -->
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#3dd9a4" stroke-width="14"
+                stroke-dasharray="213.6 238.8" stroke-dashoffset="0"/>
+              <!-- Food 24% -->
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#a78bfa" stroke-width="14"
+                stroke-dasharray="57.3 238.8" stroke-dashoffset="-213.6"/>
+              <!-- Transport 11% -->
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#fb923c" stroke-width="14"
+                stroke-dasharray="26.3 238.8" stroke-dashoffset="-270.9"/>
+              <!-- Other 9% -->
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#60a5fa" stroke-width="14"
+                stroke-dasharray="21.5 238.8" stroke-dashoffset="-297.2"/>
+            </svg>
+            <div class="donut-center">
+              <div class="donut-center-label">Main</div>
+              <div class="donut-center-val">Stay</div>
+            </div>
+          </div>
+          <div style="margin-top:4px">
+            <div class="legend-item">
+              <div class="legend-left"><span class="legend-dot" style="background:#3dd9a4"></span>Accommodation</div>
+              <div class="legend-pct">56%</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-left"><span class="legend-dot" style="background:#a78bfa"></span>Food & Drinks</div>
+              <div class="legend-pct">24%</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-left"><span class="legend-dot" style="background:#fb923c"></span>Transport</div>
+              <div class="legend-pct">11%</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-left"><span class="legend-dot" style="background:#60a5fa"></span>Other</div>
+              <div class="legend-pct">9%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIVE BALANCES -->
+        <div class="balances-card">
+          <div class="section-title"><span class="live-dot"></span>Live Balances</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin:6px 0 12px">Updates as expenses are added</div>
+          <div class="balance-row">
+            <div class="balance-person">
+              <div class="avatar-sm" style="width:28px;height:28px;font-size:0.65rem;background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+              Alex Chen
+            </div>
+            <div class="balance-amount-pos">+€120.00</div>
+          </div>
+          <div class="balance-row">
+            <div class="balance-person">
+              <div class="avatar-sm" style="width:28px;height:28px;font-size:0.65rem;background:linear-gradient(135deg,#a78bfa,#6d28d9)">SM</div>
+              Sarah Miller
+            </div>
+            <div class="balance-amount-pos">+€340.00</div>
+          </div>
+          <div class="balance-row">
+            <div class="balance-person">
+              <div class="avatar-sm" style="width:28px;height:28px;font-size:0.65rem;background:linear-gradient(135deg,#fb923c,#c2410c)">MT</div>
+              Marcus Thorne
+            </div>
+            <div class="balance-amount-neg">–€450.00</div>
+          </div>
+          <div class="balance-row">
+            <div class="balance-person">
+              <div class="avatar-sm" style="width:28px;height:28px;font-size:0.65rem;background:linear-gradient(135deg,#60a5fa,#1d4ed8)">JW</div>
+              Jordan Wu
+            </div>
+            <div class="balance-amount-neg">–€10.00</div>
+          </div>
+        </div>
+
+        <!-- SETTLEMENT PREVIEW -->
+        <div class="settlement-card">
+          <div class="section-title" style="margin-bottom:12px">Settle Up Preview</div>
+          <div class="settle-row">
+            <div class="avatar-sm" style="width:22px;height:22px;font-size:0.6rem;background:linear-gradient(135deg,#fb923c,#c2410c)">MT</div>
+            <span style="color:var(--text-muted);font-size:0.82rem">Marcus</span>
+            <i class="bi bi-arrow-right settle-arrow"></i>
+            <div class="avatar-sm" style="width:22px;height:22px;font-size:0.6rem;background:linear-gradient(135deg,#a78bfa,#6d28d9)">SM</div>
+            <span style="color:var(--text-muted);font-size:0.82rem">Sarah</span>
+            <div class="settle-amount">€340</div>
+          </div>
+          <div class="settle-row">
+            <div class="avatar-sm" style="width:22px;height:22px;font-size:0.6rem;background:linear-gradient(135deg,#fb923c,#c2410c)">MT</div>
+            <span style="color:var(--text-muted);font-size:0.82rem">Marcus</span>
+            <i class="bi bi-arrow-right settle-arrow"></i>
+            <div class="avatar-sm" style="width:22px;height:22px;font-size:0.6rem;background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+            <span style="color:var(--text-muted);font-size:0.82rem">Alex</span>
+            <div class="settle-amount">€110</div>
+          </div>
+          <div class="settle-row">
+            <div class="avatar-sm" style="width:22px;height:22px;font-size:0.6rem;background:linear-gradient(135deg,#60a5fa,#1d4ed8)">JW</div>
+            <span style="color:var(--text-muted);font-size:0.82rem">Jordan</span>
+            <i class="bi bi-arrow-right settle-arrow"></i>
+            <div class="avatar-sm" style="width:22px;height:22px;font-size:0.6rem;background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+            <span style="color:var(--text-muted);font-size:0.82rem">Alex</span>
+            <div class="settle-amount">€10</div>
+          </div>
+          <button class="view-split-btn" style="width:100%;margin-top:14px;justify-content:center">
+            <i class="bi bi-check2-all"></i> Full Settlement
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
