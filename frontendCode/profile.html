@@ -36,7 +36,7 @@
 
   <div class="sidebar-section-label" style="margin-top:10px;">Navigation</div>
 
-  <a href="#" class="nav-item-btn"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+  <a href="/index" class="nav-item-btn"><i class="bi bi-grid-1x2"></i> Dashboard</a>
   <a href="#" class="nav-item-btn"><i class="bi bi-receipt"></i> Expenses</a>
   <a href="#" class="nav-item-btn"><i class="bi bi-activity"></i> Activity</a>
   <a href="#" class="nav-item-btn"><i class="bi bi-arrow-left-right"></i> Settlements</a>
@@ -48,7 +48,11 @@
   <div class="sidebar-bottom">
     <a href="#" class="nav-item-btn active"><i class="bi bi-person-circle"></i> Profile</a>
     <a href="#" class="nav-item-btn"><i class="bi bi-question-circle"></i> Help</a>
-    <a href="#" class="nav-item-btn" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+    <form action="/api/logout" method="POST" style="display:contents;">
+      <button type="submit" class="nav-item-btn" style="color:var(--danger); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
+        <i class="bi bi-box-arrow-right"></i> Sign Out
+      </button>
+    </form>
   </div>
 </aside>
 
@@ -65,7 +69,7 @@
     <div class="topnav-icons">
       <div class="icon-btn"><i class="bi bi-bell"></i></div>
       <div class="icon-btn"><i class="bi bi-gear"></i></div>
-      <div class="avatar-sm">AC</div>
+      <div class="avatar-sm" id="profile-avatar">...</div>
     </div>
   </nav>
 
@@ -78,23 +82,23 @@
 
       <!-- Avatar row -->
       <div class="profile-avatar-row">
-        <div class="profile-avatar" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+        <div class="profile-avatar" id="profile-avatar-initials">...</div>
         <div>
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text-primary)">Alex Chen</div>
-          <div class="profile-avatar-meta">Member since January 2024</div>
+          <div id="profile-name-display" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text-primary)">...</div>
+          <div class="profile-avatar-meta" id="member-since">Member since ...</div>
         </div>
       </div>
 
       <!-- Display name -->
       <div class="field-group">
         <label class="form-label-sm" for="profile-name">Display Name</label>
-        <input class="form-input" type="text" id="profile-name" value="Alex Chen"/>
+        <input class="form-input" type="text" id="profile-name" placeholder="Your name"/>
       </div>
 
       <!-- Email -->
       <div class="field-group">
         <label class="form-label-sm" for="profile-email">Email Address</label>
-        <input class="form-input" type="email" id="profile-email" value="alex.chen@example.com"/>
+        <input class="form-input" type="email" id="profile-email" placeholder="your@email.com" readonly/>
       </div>
 
       <!-- Password divider -->
@@ -180,6 +184,24 @@
     input.type = isHidden ? 'text' : 'password';
     icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
   }
+
+  fetch('/api/user')
+    .then(res => res.json())
+    .then(data => {
+      if (data.authenticated) {
+        const initials = (data.first_name[0] + data.last_name[0]).toUpperCase();
+        document.getElementById('profile-avatar').textContent = initials;
+        document.getElementById('profile-avatar-initials').textContent = initials;
+        document.getElementById('profile-name-display').textContent = data.first_name + ' ' + data.last_name;
+        document.getElementById('profile-name').value = data.first_name + ' ' + data.last_name;
+        document.getElementById('profile-email').value = data.email;
+        const date = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        document.getElementById('member-since').textContent = 'Member since ' + date;
+      } else {
+        window.location.href = '/login';
+      }
+    })
+    .catch(() => window.location.href = '/login');
 </script>
 </body>
 </html>
