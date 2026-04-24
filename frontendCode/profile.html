@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SplitMate – Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Split<span>Mate</span></div>
+
+  <div class="sidebar-section-label">My Groups</div>
+
+  <div class="group-item active">
+    <span class="group-dot" style="background:#3dd9a4"></span>
+    Holiday in Paris
+  </div>
+  <div class="group-item">
+    <span class="group-dot" style="background:#a78bfa"></span>
+    Apartment 4B
+  </div>
+  <div class="group-item">
+    <span class="group-dot" style="background:#fb923c"></span>
+    Weekend Road Trip
+  </div>
+
+  <button class="add-expense-btn" style="margin-top:12px; background:none; border:1px dashed var(--border); color:var(--text-muted); font-weight:500;">
+    <i class="bi bi-plus"></i> New Group
+  </button>
+
+  <div class="sidebar-section-label" style="margin-top:10px;">Navigation</div>
+
+  <a href="#" class="nav-item-btn"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-receipt"></i> Expenses</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-activity"></i> Activity</a>
+  <a href="#" class="nav-item-btn"><i class="bi bi-arrow-left-right"></i> Settlements</a>
+
+  <button class="add-expense-btn">
+    <i class="bi bi-plus-lg"></i> Add Expense
+  </button>
+
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item-btn active"><i class="bi bi-person-circle"></i> Profile</a>
+    <a href="#" class="nav-item-btn"><i class="bi bi-question-circle"></i> Help</a>
+    <a href="#" class="nav-item-btn" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main-content">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="topnav-group">My Profile</div>
+    <div class="search-bar">
+      <i class="bi bi-search"></i>
+      Search expenses…
+    </div>
+    <div class="topnav-icons">
+      <div class="icon-btn"><i class="bi bi-bell"></i></div>
+      <div class="icon-btn"><i class="bi bi-gear"></i></div>
+      <div class="avatar-sm">AC</div>
+    </div>
+  </nav>
+
+  <!-- PAGE BODY -->
+  <div class="page-body" style="max-width:680px">
+
+    <!-- ── SECTION 1: PROFILE DETAILS ── -->
+    <div class="form-card" style="margin-bottom:24px">
+      <div class="form-card-title"><i class="bi bi-person-fill"></i> Profile Details</div>
+
+      <!-- Avatar row -->
+      <div class="profile-avatar-row">
+        <div class="profile-avatar" style="background:linear-gradient(135deg,#3dd9a4,#1a8a60)">AC</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text-primary)">Alex Chen</div>
+          <div class="profile-avatar-meta">Member since January 2024</div>
+        </div>
+      </div>
+
+      <!-- Display name -->
+      <div class="field-group">
+        <label class="form-label-sm" for="profile-name">Display Name</label>
+        <input class="form-input" type="text" id="profile-name" value="Alex Chen"/>
+      </div>
+
+      <!-- Email -->
+      <div class="field-group">
+        <label class="form-label-sm" for="profile-email">Email Address</label>
+        <input class="form-input" type="email" id="profile-email" value="alex.chen@example.com"/>
+      </div>
+
+      <!-- Password divider -->
+      <div class="profile-section-gap">
+        <div class="form-label-sm" style="color:var(--text-dim);margin-bottom:14px;font-size:0.6rem">CHANGE PASSWORD</div>
+
+        <div class="field-group">
+          <label class="form-label-sm" for="profile-current-pw">Current Password</label>
+          <div class="pw-wrap">
+            <input class="form-input" type="password" id="profile-current-pw" placeholder="Enter current password"/>
+            <button type="button" class="pw-toggle" onclick="togglePw('profile-current-pw','icon-cur')" aria-label="Toggle">
+              <i class="bi bi-eye" id="icon-cur"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="form-label-sm" for="profile-new-pw">New Password</label>
+          <div class="pw-wrap">
+            <input class="form-input" type="password" id="profile-new-pw" placeholder="Enter new password"/>
+            <button type="button" class="pw-toggle" onclick="togglePw('profile-new-pw','icon-new')" aria-label="Toggle">
+              <i class="bi bi-eye" id="icon-new"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <button class="btn-primary-action">
+          <i class="bi bi-check-lg"></i> Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: MY GROUPS SUMMARY ── -->
+    <div class="form-card">
+      <div class="form-card-title"><i class="bi bi-people-fill"></i> My Groups</div>
+
+      <div class="groups-summary-header">
+        <div>Group</div>
+        <div style="text-align:right">Total Spent</div>
+        <div style="text-align:right">My Balance</div>
+      </div>
+
+      <div class="groups-summary-row">
+        <div class="groups-summary-name">
+          <span class="group-dot" style="background:#3dd9a4"></span>
+          Holiday in Paris
+        </div>
+        <div class="groups-summary-spent">€4,280.50</div>
+        <div class="group-balance positive">+€120.00</div>
+      </div>
+
+      <div class="groups-summary-row">
+        <div class="groups-summary-name">
+          <span class="group-dot" style="background:#a78bfa"></span>
+          Apartment 4B
+        </div>
+        <div class="groups-summary-spent">€2,150.00</div>
+        <div class="group-balance negative">–€85.00</div>
+      </div>
+
+      <div class="groups-summary-row">
+        <div class="groups-summary-name">
+          <span class="group-dot" style="background:#fb923c"></span>
+          Weekend Road Trip
+        </div>
+        <div class="groups-summary-spent">€640.00</div>
+        <div class="group-balance neutral">Settled</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function togglePw(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon  = document.getElementById(iconId);
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+  }
+</script>
+</body>
+</html>
