@@ -31,8 +31,15 @@ def profile():
 
 @main_bp.route('/<page>')
 def static_page(page):
-    valid_pages = ['index.html', 'login.html', 'signup.html', 'dashboard.html', 'profile.html', '404.html']
-    if page in valid_pages:
+    public_pages = ['login.html', 'signup.html', '404.html']
+    protected_pages = ['index.html', 'dashboard.html', 'profile.html']
+
+    if page in protected_pages:
+        if not current_user.is_authenticated:
+            return redirect('/login')
+        return send_from_directory(FRONTEND_DIR, page)
+
+    if page in public_pages:
         return send_from_directory(FRONTEND_DIR, page)
     return send_from_directory(FRONTEND_DIR, '404.html'), 404
 
