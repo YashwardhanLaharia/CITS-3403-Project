@@ -57,7 +57,8 @@ def login():
     
     return redirect_with_message('/login', error='Invalid email or password')
 
-@auth_bp.route('/logout', methods=['POST', 'GET'])
+@auth_bp.route('/logout', methods=['POST'])
+@login_required
 def logout():
     logout_user()
     return redirect_with_message('/login', success='You have been logged out')
