@@ -1,0 +1,36 @@
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from dotenv import load_dotenv
+from config import config
+
+load_dotenv()
+
+db = SQLAlchemy()
+migrate = Migrate()
+login_manager = LoginManager()
+login_manager.login_view = 'main.login'
+
+
+def create_app(config_name=None):
+    if config_name is None:
+        config_name = os.environ.get('FLASK_ENV', 'default')
+
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+
+    from routes.main import main_bp
+    app.register_blueprint(main_bp)
+
+    return app
+
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True, port=5000)
