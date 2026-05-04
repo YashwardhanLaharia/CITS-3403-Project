@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title_suffix %} – Dashboard{% endblock %}
+
+{% block body %}
+{% include "_sidebar.html" %}
+
+<div class="main-content">
+
+  <nav class="topnav">
+    <div class="search-bar">
+      <i class="bi bi-search"></i>
+      Search expenses...
+    </div>
+    <div class="topnav-icons">
+      <div class="icon-btn"><i class="bi bi-bell"></i></div>
+      <div class="icon-btn"><i class="bi bi-gear"></i></div>
+      <div class="avatar-sm">{{ initials|default('--') }}</div>
+    </div>
+  </nav>
+
+  <div class="page-body">
+
+    <div class="welcome-row">
+      <div>
+        <div class="welcome-title">{{ group_name|default('Group Dashboard') }}</div>
+        <div class="welcome-sub">{{ member_count|default(0) }} members</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Member Balances</div>
+        <div class="section-sub">Who's paid what so far</div>
+      </div>
+    </div>
+
+    <div class="groups-grid">
+      <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:140px;">
+        <div style="text-align:center; color:var(--text-muted);">
+          <i class="bi bi-cash-stack" style="font-size:2rem;"></i>
+          <div style="margin-top:8px;">No expenses recorded yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Recent Activity</div>
+        <div class="section-sub">Latest expenses in this group</div>
+      </div>
+    </div>
+
+    <div class="archived-grid">
+      <div class="archived-card">
+        <div class="archived-icon">📝</div>
+        <div>
+          <div class="archived-name">No activity yet</div>
+          <div class="archived-meta">Add an expense to get started</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Settlement Preview</div>
+        <div class="section-sub">Who owes whom</div>
+      </div>
+    </div>
+
+    <div class="archived-grid">
+      <div class="archived-card">
+        <div class="archived-icon"><i class="bi bi-arrow-left-right"></i></div>
+        <div>
+          <div class="archived-name">All settled up</div>
+          <div class="archived-meta">No outstanding balances</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

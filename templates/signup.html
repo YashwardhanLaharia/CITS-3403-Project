@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title_suffix %} – Sign Up{% endblock %}
+
+{% block body %}
+<div class="login-left">
+  <div class="sidebar-logo">Split<span>Mate</span></div>
+
+  <div class="brand-tagline">Start splitting<br>in seconds.</div>
+  <div class="brand-sub">
+    Create your free account and join thousands of people who use SplitMate
+    to keep shared expenses fair and stress-free.
+  </div>
+
+  <div class="feature-list">
+    <div class="feature-item">
+      <i class="bi bi-shield-check"></i>
+      <span>Your data is private and never sold to third parties</span>
+    </div>
+    <div class="feature-item">
+      <i class="bi bi-lightning-charge-fill"></i>
+      <span>Get set up in under a minute - no credit card required</span>
+    </div>
+    <div class="feature-item">
+      <i class="bi bi-people-fill"></i>
+      <span>Invite friends instantly with a shareable group link</span>
+    </div>
+  </div>
+</div>
+
+<div class="login-right">
+  <div class="login-card login-card--wide">
+
+    <div class="login-heading">Create an account</div>
+    <div class="login-sub">Join SplitMate - it's free, always.</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form action="{{ url_for('main.signup') }}" method="POST">
+      <div class="field-row-2 field-group">
+        <div>
+          <label class="form-label-sm" for="first-name">First Name</label>
+          <input class="form-input" type="text" id="first-name" name="first_name"
+                 placeholder="John" autocomplete="given-name"/>
+        </div>
+        <div>
+          <label class="form-label-sm" for="last-name">Last Name</label>
+          <input class="form-input" type="text" id="last-name" name="last_name"
+                 placeholder="Doe" autocomplete="family-name"/>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="form-label-sm" for="email">Email Address</label>
+        <input class="form-input" type="email" id="email" name="email"
+               placeholder="you@example.com" autocomplete="email"/>
+      </div>
+
+      <div class="field-group">
+        <label class="form-label-sm" for="password">Password</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="password" name="password"
+                 placeholder="Create a strong password" autocomplete="new-password"
+                 oninput="checkStrength(this.value)"/>
+          <button type="button" class="pw-toggle" aria-label="Toggle password visibility"
+                  onclick="togglePassword('password','pw-icon-1')">
+            <i class="bi bi-eye" id="pw-icon-1"></i>
+          </button>
+        </div>
+        <div class="strength-bar">
+          <div class="strength-segment" id="s1"></div>
+          <div class="strength-segment" id="s2"></div>
+          <div class="strength-segment" id="s3"></div>
+          <div class="strength-segment" id="s4"></div>
+        </div>
+        <div class="strength-label" id="strength-label"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="form-label-sm" for="confirm-password">Confirm Password</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="confirm-password" name="confirm_password"
+                 placeholder="Repeat your password" autocomplete="new-password"
+                 oninput="checkMatch()"/>
+          <button type="button" class="pw-toggle" aria-label="Toggle confirm password visibility"
+                  onclick="togglePassword('confirm-password','pw-icon-2')">
+            <i class="bi bi-eye" id="pw-icon-2"></i>
+          </button>
+        </div>
+        <div class="match-hint" id="match-hint"></div>
+      </div>
+
+      <div class="terms-row">
+        <input type="checkbox" id="terms"/>
+        <label for="terms">
+          I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-primary-action full">
+        <i class="bi bi-person-plus-fill"></i> Create Account
+      </button>
+    </form>
+
+    <div class="login-divider"><span>already have an account?</span></div>
+
+    <div class="signup-row">
+      <a href="{{ url_for('main.login') }}">Log in instead</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function togglePassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon  = document.getElementById(iconId);
+    const isHidden = input.type === 'password';
+    input.type  = isHidden ? 'text' : 'password';
+    icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+  }
+
+  const strengthColors = ['', '#ff6b6b', '#fbbf24', '#60a5fa', '#3dd9a4'];
+  const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+
+  function checkStrength(val) {
+    let score = 0;
+    if (val.length >= 8)           score++;
+    if (/[A-Z]/.test(val))         score++;
+    if (/[0-9]/.test(val))         score++;
+    if (/[^A-Za-z0-9]/.test(val))  score++;
+
+    for (let i = 1; i <= 4; i++) {
+      const seg = document.getElementById('s' + i);
+      seg.style.background = i <= score ? strengthColors[score] : 'var(--border)';
+    }
+
+    const label = document.getElementById('strength-label');
+    label.textContent = val.length ? strengthLabels[score] : '';
+    label.style.color  = val.length ? strengthColors[score] : 'var(--text-dim)';
+
+    checkMatch();
+  }
+
+  function checkMatch() {
+    const pw      = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    const hint    = document.getElementById('match-hint');
+
+    if (!confirm) { hint.textContent = ''; return; }
+
+    if (pw === confirm) {
+      hint.textContent = 'Passwords match';
+      hint.className   = 'match-hint ok';
+    } else {
+      hint.textContent = 'Passwords do not match';
+      hint.className   = 'match-hint fail';
+    }
+  }
+</script>
+{% endblock %}
