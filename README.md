@@ -1,31 +1,67 @@
-# Group Expense Splitter
+# SplitMate
 
-## Description
-Group Expense Splitter is a collaborative web application that helps groups of users track shared expenses and settle costs fairly. Users can create an account, create or join a group, add expenses, and view a shared dashboard showing group spending.
+A collaborative expense-splitting web app built for CITS3403 Agile Web Development at UWA. SplitMate helps groups of people track shared expenses and figure out who owes what, so nobody has to do the maths themselves.
 
-The app is designed for situations such as holidays, share houses, events, or group dinners, where multiple people are paying for shared costs over time. It simplifies the process by calculating how much each person has contributed and showing who owes whom at the end.
+Think share houses, group holidays, dinners out - anywhere a group of people are splitting costs over time.
 
-## Purpose
-The purpose of this application is to provide a simple and transparent way for groups to manage shared expenses. Instead of manually tracking payments and working out balances, users can collaborate within a shared group and let the system calculate the fairest settlement.
+## Team
 
-## Main Features
-- User signup, login, and logout
-- Create or join a group using an invite code
-- Add shared expenses with description, amount, date, and category
-- View group expenses and total spending
-- View each member’s contribution
-- View category-based spending breakdown
-- Activity feed showing recently added expenses
-- Final settlement screen showing who owes whom
+| Name | UWA ID | GitHub |
+|------|--------|--------|
+| Yashwardhan Laharia | | [YashwardhanLaharia](https://github.com/YashwardhanLaharia) |
+| Aman Sohail | | [amansohail22](https://github.com/amansohail22) |
+| Stefan Ciu | | [stfn-c](https://github.com/stfn-c) |
 
-## Technologies
-- HTML
-- CSS
-- JavaScript
-- Bootstrap
-- Flask
-- SQLite
-- SQLAlchemy
+## What it does
 
-## How the App Works
-Users join the same group and record expenses they pay on behalf of the group. All members can see the shared expense data, including who paid for what and the total spending so far. At the end, the application calculates each member’s fair share and generates a settlement plan showing exactly who needs to pay whom.
+- **Accounts** - sign up, log in, manage your profile
+- **Groups** - create a group or join one with an invite code
+- **Expenses** - log shared expenses with amounts, categories, and dates
+- **Dashboard** - see who's paid what, spending breakdowns by category, and recent activity
+- **Settlements** - automatic calculation of who owes whom and how much
+
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | HTML, CSS, JavaScript, Bootstrap |
+| Backend | Flask, Jinja2 |
+| Database | SQLite via SQLAlchemy |
+| Async | AJAX for live updates |
+| Testing | unittest, Selenium |
+
+## Getting started
+
+**Prerequisites:** Python 3.10+
+
+```bash
+# Clone the repo
+git clone https://github.com/YashwardhanLaharia/CITS-3403-Project.git
+cd CITS-3403-Project
+
+# Set up a virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the app
+flask run
+```
+
+The app will be available at `http://localhost:5000`.
+
+## Running tests
+
+```bash
+# Unit tests
+python -m pytest tests/
+
+# Selenium tests (requires the app to be running)
+python -m pytest tests/selenium/
+```
+
+## How we work
+
+We follow a structured branching and issue workflow. Every feature gets an issue, every issue gets a branch, and every branch gets a PR. Details are in [`documents/planning.md`](documents/planning.md).
