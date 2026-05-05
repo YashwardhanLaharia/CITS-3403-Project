@@ -8,9 +8,9 @@ Think share houses, group holidays, dinners out - anywhere a group of people are
 
 | Name | UWA ID | GitHub |
 |------|--------|--------|
-| Yashwardhan Laharia | | [YashwardhanLaharia](https://github.com/YashwardhanLaharia) |
-| Aman Sohail | | [amansohail22](https://github.com/amansohail22) |
-| Stefan Ciu | | [stfn-c](https://github.com/stfn-c) |
+| Yashwardhan Laharia | 24295462 | [YashwardhanLaharia](https://github.com/YashwardhanLaharia) |
+| Aman Sohail | 24307949 | [amansohail22](https://github.com/amansohail22) |
+| Stefan Ciu | 24466541 | [stfn-c](https://github.com/stfn-c) |
 
 ## What it does
 
