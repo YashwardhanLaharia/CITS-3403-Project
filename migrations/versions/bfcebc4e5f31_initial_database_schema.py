@@ -48,7 +48,7 @@ def upgrade():
     sa.Column('group_id', sa.Integer(), nullable=False),
     sa.Column('paid_by', sa.Integer(), nullable=False),
     sa.Column('description', sa.String(length=200), nullable=False),
-    sa.Column('amount', sa.Float(), nullable=False),
+    sa.Column('amount', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('category', sa.String(length=50), nullable=False),
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),

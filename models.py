@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from flask_login import UserMixin
 from extensions import db
 
@@ -15,6 +15,7 @@ class User(UserMixin, db.Model):
 
     memberships = db.relationship('Membership', back_populates='user', lazy='dynamic')
     created_groups = db.relationship('Group', back_populates='creator', lazy='dynamic')
+    expenses_paid = db.relationship('Expense', back_populates='payer', lazy='dynamic')
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -65,13 +66,13 @@ class Expense(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=False)
     paid_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     description = db.Column(db.String(200), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
     category = db.Column(db.String(50), nullable=False)
-    date = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
+    date = db.Column(db.Date, nullable=False, default=date.today)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     group = db.relationship('Group', back_populates='expenses')
-    payer = db.relationship('User', foreign_keys=[paid_by])
+    payer = db.relationship('User', foreign_keys=[paid_by], back_populates='expenses_paid')
 
     def __repr__(self):
         return f'<Expense {self.description} ${self.amount}>'

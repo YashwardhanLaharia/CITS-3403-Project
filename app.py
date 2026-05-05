@@ -27,6 +27,7 @@ def create_app(config_name=None):
     from routes.main import main_bp
     app.register_blueprint(main_bp)
 
+    # Import models to register them with SQLAlchemy for migrations
     from models import User, Group, Membership, Expense
 
     return app
