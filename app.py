@@ -1,12 +1,15 @@
 import os
 from flask import Flask
+from flask_migrate import Migrate
+from flask_login import LoginManager
 from dotenv import load_dotenv
 from config import config
+from extensions import db
 
 load_dotenv()
 
-from extensions import db, migrate, login_manager
-
+migrate = Migrate()
+login_manager = LoginManager()
 login_manager.login_view = 'main.login'
 
 

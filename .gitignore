@@ -6,3 +6,4 @@ venv/
 .DS_Store
 *.db
 migrations/versions/*.pyc
+migrations/__pycache__/
