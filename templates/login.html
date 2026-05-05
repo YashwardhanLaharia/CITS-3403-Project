@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title_suffix %} – Log In{% endblock %}
+
+{% block body %}
+<div class="login-left">
+  <div class="sidebar-logo">Split<span>Mate</span></div>
+
+  <div class="brand-tagline">Split bills.<br>Not friendships.</div>
+  <div class="brand-sub">
+    Track shared expenses, settle debts, and keep everyone on the same page - no matter where you are.
+  </div>
+
+  <div class="feature-list">
+    <div class="feature-item">
+      <i class="bi bi-people-fill"></i>
+      <span>Create groups for trips, households, or anything in between</span>
+    </div>
+    <div class="feature-item">
+      <i class="bi bi-receipt-cutoff"></i>
+      <span>Log expenses instantly and split them however you like</span>
+    </div>
+    <div class="feature-item">
+      <i class="bi bi-arrow-left-right"></i>
+      <span>Settle up with one tap - no awkward conversations needed</span>
+    </div>
+  </div>
+</div>
+
+<div class="login-right">
+  <div class="login-card">
+
+    <div class="login-heading">Welcome back</div>
+    <div class="login-sub">Log in to your SplitMate account to continue.</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form action="{{ url_for('main.login') }}" method="POST">
+      <div class="field-group">
+        <label class="form-label-sm" for="email">Email Address</label>
+        <input class="form-input" type="email" id="email" name="email"
+               placeholder="you@example.com" autocomplete="email"/>
+      </div>
+
+      <div class="field-group">
+        <label class="form-label-sm" for="password">Password</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="password" name="password"
+                 placeholder="Enter your password" autocomplete="current-password"/>
+          <button type="button" class="pw-toggle" aria-label="Toggle password visibility"
+                  onclick="togglePassword()">
+            <i class="bi bi-eye" id="pw-icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="check-row">
+        <label class="check-label">
+          <input type="checkbox" id="remember" name="remember"/>
+          Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-primary-action full">
+        <i class="bi bi-box-arrow-in-right"></i> Log In
+      </button>
+    </form>
+
+    <div class="login-divider"><span>or</span></div>
+
+    <div class="signup-row">
+      Don't have an account? <a href="{{ url_for('main.signup') }}">Sign up for free</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('pw-icon');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+  }
+</script>
+{% endblock %}

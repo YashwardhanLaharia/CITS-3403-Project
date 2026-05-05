@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title_suffix %} – Profile{% endblock %}
+
+{% block body %}
+{% include "_sidebar.html" %}
+
+<div class="main-content">
+
+  <nav class="topnav">
+    <div class="search-bar">
+      <i class="bi bi-search"></i>
+      Search...
+    </div>
+    <div class="topnav-icons">
+      <div class="icon-btn"><i class="bi bi-bell"></i></div>
+      <div class="icon-btn"><i class="bi bi-gear"></i></div>
+      <div class="avatar-sm">{{ initials|default('--') }}</div>
+    </div>
+  </nav>
+
+  <div class="page-body">
+
+    <div class="welcome-row">
+      <div>
+        <div class="welcome-title">Your Profile</div>
+        <div class="welcome-sub">View and manage your account details.</div>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="form-card" style="max-width:560px;">
+      <div class="form-card-title"><i class="bi bi-person-circle"></i> Account Details</div>
+
+      <form method="POST" action="{{ url_for('main.profile') }}">
+        <div class="field-row-2 field-group">
+          <div>
+            <label class="form-label-sm" for="first-name">First Name</label>
+            <input class="form-input" type="text" id="first-name" name="first_name"
+                   value="{{ first_name|default('') }}"/>
+          </div>
+          <div>
+            <label class="form-label-sm" for="last-name">Last Name</label>
+            <input class="form-input" type="text" id="last-name" name="last_name"
+                   value="{{ last_name|default('') }}"/>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="form-label-sm" for="email">Email Address</label>
+          <input class="form-input" type="email" id="email" name="email"
+                 value="{{ email|default('') }}" disabled/>
+        </div>
+
+        <div class="field-group">
+          <label class="form-label-sm" for="current-password">Current Password</label>
+          <input class="form-input" type="password" id="current-password" name="current_password"
+                 placeholder="Required to save changes"/>
+        </div>
+
+        <div class="field-group">
+          <label class="form-label-sm" for="new-password">New Password (optional)</label>
+          <input class="form-input" type="password" id="new-password" name="new_password"
+                 placeholder="Leave blank to keep current password"/>
+        </div>
+
+        <button type="submit" class="btn-primary-action">
+          <i class="bi bi-check-lg"></i> Save Changes
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

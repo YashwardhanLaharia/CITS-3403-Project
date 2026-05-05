@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title_suffix %} – Not Found{% endblock %}
+
+{% block body %}
+<div style="display:flex; align-items:center; justify-content:center; min-height:100vh; text-align:center;">
+  <div>
+    <div style="font-family:'Syne',sans-serif; font-size:5rem; font-weight:800; color:var(--accent);">404</div>
+    <div style="font-size:1.2rem; color:var(--text-muted); margin:16px 0 32px;">
+      The page you're looking for doesn't exist or has been moved.
+    </div>
+    <a href="{{ url_for('main.index') }}" class="btn-primary-action" style="text-decoration:none; display:inline-block;">
+      <i class="bi bi-house"></i> Back to Home
+    </a>
+  </div>
+</div>
+{% endblock %}

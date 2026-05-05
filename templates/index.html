@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title_suffix %} – Home{% endblock %}
+
+{% block body %}
+{% include "_sidebar.html" %}
+
+<div class="main-content">
+
+  <nav class="topnav">
+    <div class="search-bar">
+      <i class="bi bi-search"></i>
+      Search groups...
+    </div>
+    <div class="topnav-icons">
+      <div class="icon-btn"><i class="bi bi-bell"></i></div>
+      <div class="icon-btn"><i class="bi bi-gear"></i></div>
+      <div class="avatar-sm">{{ initials|default('--') }}</div>
+    </div>
+  </nav>
+
+  <div class="page-body">
+
+    <div class="welcome-row">
+      <div>
+        <div class="welcome-title">Welcome back,<br><span>{{ first_name|default('User') }}</span>.</div>
+        <div class="welcome-sub">Manage your shared expenses and keep things fair across all your groups.</div>
+      </div>
+      <div class="net-balance-card">
+        <div class="net-balance-label">Net Balance (All Groups)</div>
+        <div class="net-balance-amount" style="color:var(--accent)">+$0</div>
+        <div class="net-balance-sub">You are owed across 0 active groups</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+
+      <div class="form-card">
+        <div class="form-card-title"><i class="bi bi-people-fill"></i> Create a New Group</div>
+        <div class="form-row-2">
+          <div>
+            <label class="form-label-sm">Group Name</label>
+            <input class="form-input" type="text" placeholder="e.g. Summer Roadtrip"/>
+          </div>
+          <div>
+            <label class="form-label-sm">Currency</label>
+            <select class="form-select">
+              <option>AUD ($)</option>
+              <option>USD ($)</option>
+              <option>EUR (&euro;)</option>
+              <option>GBP (&pound;)</option>
+            </select>
+          </div>
+        </div>
+        <label class="form-label-sm">Invite Members (Email)</label>
+        <div class="invite-row">
+          <input class="form-input" type="email" placeholder="friend@example.com"/>
+          <button class="btn-add-member">Add</button>
+        </div>
+        <button class="btn-primary-action">
+          <i class="bi bi-plus-circle-fill"></i> Create Group
+        </button>
+      </div>
+
+      <div class="join-card">
+        <div class="join-card-title"><i class="bi bi-link-45deg"></i> Join a Group</div>
+        <div class="join-card-sub">Have an invite code? Enter it below to join an existing group.</div>
+        <div class="code-input-wrap">
+          <input class="code-input" type="text" placeholder="X7-R92-K4" maxlength="10"/>
+        </div>
+        <button class="btn-join"><i class="bi bi-arrow-right-circle"></i> Join Now</button>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Active Groups</div>
+        <div class="section-sub">Ongoing shared expense spaces</div>
+      </div>
+      <a href="#" class="view-all-link">View All <i class="bi bi-chevron-right"></i></a>
+    </div>
+
+    <div class="groups-grid">
+      <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:180px;">
+        <div style="text-align:center; color:var(--text-muted);">
+          <i class="bi bi-people" style="font-size:2rem;"></i>
+          <div style="margin-top:8px;">No groups yet. Create or join one above.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
