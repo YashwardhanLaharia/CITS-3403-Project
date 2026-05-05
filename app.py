@@ -1,16 +1,12 @@
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager
 from dotenv import load_dotenv
 from config import config
 
 load_dotenv()
 
-db = SQLAlchemy()
-migrate = Migrate()
-login_manager = LoginManager()
+from extensions import db, migrate, login_manager
+
 login_manager.login_view = 'main.login'
 
 
@@ -27,6 +23,8 @@ def create_app(config_name=None):
 
     from routes.main import main_bp
     app.register_blueprint(main_bp)
+
+    from models import User, Group, Membership, Expense
 
     return app
 
