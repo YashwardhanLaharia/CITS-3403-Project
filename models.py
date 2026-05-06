@@ -30,6 +30,8 @@ class Group(db.Model):
     invite_code = db.Column(db.String(10), unique=True, nullable=False, index=True)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    start_date = db.Column(db.Date, nullable=True)
+    end_date = db.Column(db.Date, nullable=True)
 
     creator = db.relationship('User', back_populates='created_groups')
     memberships = db.relationship('Membership', back_populates='group', lazy='dynamic')

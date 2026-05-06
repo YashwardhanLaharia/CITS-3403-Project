@@ -40,7 +40,9 @@ def seed():
             name='Summer Roadtrip',
             currency='AUD',
             invite_code='SRD24AUD',
-            created_by=user1.id
+            created_by=user1.id,
+            start_date=date(2024, 7, 1),
+            end_date=date(2024, 7, 10)
         )
         db.session.add(group)
         db.session.commit()
