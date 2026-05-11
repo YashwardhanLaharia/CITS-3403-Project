@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from extensions import db
 
@@ -16,6 +17,12 @@ class User(UserMixin, db.Model):
     memberships = db.relationship('Membership', back_populates='user', lazy='dynamic')
     created_groups = db.relationship('Group', back_populates='creator', lazy='dynamic')
     expenses_paid = db.relationship('Expense', back_populates='payer', lazy='dynamic')
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return f'<User {self.email}>'
