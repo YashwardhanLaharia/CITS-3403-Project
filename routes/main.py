@@ -9,7 +9,10 @@ main_bp = Blueprint('main', __name__)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    user = User.query.get(int(user_id))
+    if user is None:
+        login_manager.unauthorized()
+    return user
 
 
 @main_bp.route('/')
