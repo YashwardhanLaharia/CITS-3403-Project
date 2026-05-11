@@ -14,6 +14,11 @@
 
   <div class="sidebar-bottom">
     <a href="{{ url_for('main.profile') }}" class="nav-item-btn {{ 'active' if active_page == 'profile' }}"><i class="bi bi-person-circle"></i> Profile</a>
-    <a href="#" class="nav-item-btn"><i class="bi bi-question-circle"></i> Help</a>
+    <form method="POST" action="{{ url_for('main.logout') }}" style="margin:0;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <button type="submit" class="nav-item-btn" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </form>
   </div>
 </aside>

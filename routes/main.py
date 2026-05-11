@@ -113,10 +113,54 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-@main_bp.route('/profile')
+@main_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html')
+    from flask_login import current_user
+
+    if request.method == 'POST':
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        current_password = request.form.get('current_password', '')
+        new_password = request.form.get('new_password', '')
+
+        errors = []
+
+        if not current_password:
+            errors.append('Current password is required to save changes.')
+        elif not current_user.check_password(current_password):
+            errors.append('Current password is incorrect.')
+
+        if not first_name:
+            errors.append('First name is required.')
+        if not last_name:
+            errors.append('Last name is required.')
+
+        if new_password and len(new_password) < 8:
+            errors.append('New password must be at least 8 characters.')
+
+        if errors:
+            for error in errors:
+                flash(error, 'error')
+        else:
+            current_user.first_name = first_name
+            current_user.last_name = last_name
+            if new_password:
+                current_user.set_password(new_password)
+            db.session.commit()
+            flash('Profile updated successfully.', 'success')
+
+        return render_template('profile.html',
+                               first_name=first_name or current_user.first_name,
+                               last_name=last_name or current_user.last_name,
+                               email=current_user.email,
+                               created_at=current_user.created_at)
+
+    return render_template('profile.html',
+                           first_name=current_user.first_name,
+                           last_name=current_user.last_name,
+                           email=current_user.email,
+                           created_at=current_user.created_at)
 
 
 @main_bp.errorhandler(404)
