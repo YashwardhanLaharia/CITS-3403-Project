@@ -17,8 +17,34 @@ def index():
     return render_template('index.html')
 
 
-@main_bp.route('/login')
+@main_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        remember = request.form.get('remember', False)
+
+        errors = []
+
+        if not email:
+            errors.append('Email is required.')
+        if not password:
+            errors.append('Password is required.')
+
+        if not errors:
+            user = User.query.filter_by(email=email).first()
+            if user and user.check_password(password):
+                from flask_login import login_user
+                login_user(user, remember=bool(remember))
+                next_page = request.args.get('next')
+                flash(f'Welcome back, {user.first_name}!', 'success')
+                return redirect(next_page or url_for('main.dashboard'))
+            else:
+                errors.append('Invalid email or password.')
+
+        for error in errors:
+            flash(error, 'error')
+
     return render_template('login.html')
 
 
@@ -70,6 +96,15 @@ def signup():
         return redirect(url_for('main.login'))
 
     return render_template('signup.html')
+
+
+@main_bp.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    from flask_login import logout_user
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('main.login'))
 
 
 @main_bp.route('/dashboard')
