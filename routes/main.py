@@ -13,8 +13,10 @@ def load_user(user_id):
 
 
 @main_bp.route('/')
+@login_required
 def index():
-    return render_template('index.html')
+    from flask_login import current_user
+    return render_template('index.html', first_name=current_user.first_name)
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])
@@ -38,7 +40,7 @@ def login():
                 login_user(user, remember=bool(remember))
                 next_page = request.args.get('next')
                 flash(f'Welcome back, {user.first_name}!', 'success')
-                return redirect(next_page or url_for('main.dashboard'))
+                return redirect(next_page or url_for('main.index'))
             else:
                 errors.append('Invalid email or password.')
 
@@ -147,6 +149,11 @@ def profile():
             current_user.last_name = last_name
             if new_password:
                 current_user.set_password(new_password)
+                from flask_login import logout_user
+                db.session.commit()
+                logout_user()
+                flash('Profile updated. Please log in with your new password.', 'success')
+                return redirect(url_for('main.login'))
             db.session.commit()
             flash('Profile updated successfully.', 'success')
 
