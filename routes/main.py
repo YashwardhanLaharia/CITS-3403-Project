@@ -1,8 +1,8 @@
 import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from extensions import db, login_manager
-from models import User
+from models import User, Group, Membership
 
 main_bp = Blueprint('main', __name__)
 
@@ -171,6 +171,42 @@ def profile():
                            last_name=current_user.last_name,
                            email=current_user.email,
                            created_at=current_user.created_at)
+
+
+@main_bp.route('/groups/create', methods=['POST'])
+@login_required
+def create_group():
+    name = request.form.get('group_name', '').strip()
+    currency = request.form.get('currency', '').strip()
+
+    if not name:
+        flash('Group name is required.', 'error')
+        return redirect(url_for('main.index'))
+
+    try:
+        group = Group(
+            name=name,
+            currency=currency,
+            invite_code=Group.generate_invite_code(),
+            created_by=current_user.id,
+        )
+        db.session.add(group)
+        db.session.flush()
+
+        membership = Membership(
+            user_id=current_user.id,
+            group_id=group.id,
+            role='admin',
+        )
+        db.session.add(membership)
+        db.session.commit()
+
+        flash(f'Group "{name}" created successfully!', 'success')
+    except Exception:
+        db.session.rollback()
+        flash('Failed to create group. Please try again.', 'error')
+
+    return redirect(url_for('main.index'))
 
 
 @main_bp.errorhandler(404)

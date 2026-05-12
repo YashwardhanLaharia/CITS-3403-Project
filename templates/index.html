@@ -34,32 +34,35 @@
 
     <div class="action-row">
 
-      <div class="form-card">
-        <div class="form-card-title"><i class="bi bi-people-fill"></i> Create a New Group</div>
-        <div class="form-row-2">
-          <div>
-            <label class="form-label-sm">Group Name</label>
-            <input class="form-input" type="text" placeholder="e.g. Summer Roadtrip"/>
+      <form action="{{ url_for('main.create_group') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-card">
+          <div class="form-card-title"><i class="bi bi-people-fill"></i> Create a New Group</div>
+          <div class="form-row-2">
+            <div>
+              <label class="form-label-sm">Group Name</label>
+              <input class="form-input" type="text" name="group_name" placeholder="e.g. Summer Roadtrip"/>
+            </div>
+            <div>
+              <label class="form-label-sm">Currency</label>
+              <select class="form-select" name="currency">
+                <option value="AUD">AUD ($)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (&euro;)</option>
+                <option value="GBP">GBP (&pound;)</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label class="form-label-sm">Currency</label>
-            <select class="form-select">
-              <option>AUD ($)</option>
-              <option>USD ($)</option>
-              <option>EUR (&euro;)</option>
-              <option>GBP (&pound;)</option>
-            </select>
+          <label class="form-label-sm">Invite Members (Email)</label>
+          <div class="invite-row">
+            <input class="form-input" type="email" placeholder="friend@example.com"/>
+            <button type="button" class="btn-add-member">Add</button>
           </div>
+          <button type="submit" class="btn-primary-action">
+            <i class="bi bi-plus-circle-fill"></i> Create Group
+          </button>
         </div>
-        <label class="form-label-sm">Invite Members (Email)</label>
-        <div class="invite-row">
-          <input class="form-input" type="email" placeholder="friend@example.com"/>
-          <button class="btn-add-member">Add</button>
-        </div>
-        <button class="btn-primary-action">
-          <i class="bi bi-plus-circle-fill"></i> Create Group
-        </button>
-      </div>
+      </form>
 
       <div class="join-card">
         <div class="join-card-title"><i class="bi bi-link-45deg"></i> Join a Group</div>

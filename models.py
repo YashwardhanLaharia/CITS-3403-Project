@@ -1,3 +1,5 @@
+import random
+import string
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -43,6 +45,15 @@ class Group(db.Model):
     creator = db.relationship('User', back_populates='created_groups')
     memberships = db.relationship('Membership', back_populates='group', lazy='dynamic')
     expenses = db.relationship('Expense', back_populates='group', lazy='dynamic')
+
+    @staticmethod
+    def generate_invite_code():
+        while True:
+            code = ''.join(random.choices(
+                string.ascii_uppercase + string.digits, k=8
+            ))
+            if not Group.query.filter_by(invite_code=code).first():
+                return code
 
     def __repr__(self):
         return f'<Group {self.name}>'
