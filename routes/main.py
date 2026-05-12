@@ -173,6 +173,31 @@ def profile():
                            created_at=current_user.created_at)
 
 
+@main_bp.route('/groups/join', methods=['POST'])
+@login_required
+def join_group():
+    invite_code = request.form.get('invite_code', '').strip().upper()
+
+    group = Group.query.filter_by(invite_code=invite_code).first()
+    if not group:
+        flash('Invalid invite code. Please check and try again.', 'error')
+        return redirect(url_for('main.index'))
+
+    existing = Membership.query.filter_by(
+        user_id=current_user.id, group_id=group.id
+    ).first()
+    if existing:
+        flash('You are already a member of this group.', 'error')
+        return redirect(url_for('main.index'))
+
+    membership = Membership(user_id=current_user.id, group_id=group.id, role='member')
+    db.session.add(membership)
+    db.session.commit()
+
+    flash(f'You have joined "{group.name}" successfully!', 'success')
+    return redirect(url_for('main.index'))
+
+
 @main_bp.route('/groups/create', methods=['POST'])
 @login_required
 def create_group():
