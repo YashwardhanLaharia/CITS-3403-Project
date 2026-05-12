@@ -27,8 +27,16 @@
       </div>
       <div class="net-balance-card">
         <div class="net-balance-label">Net Balance (All Groups)</div>
-        <div class="net-balance-amount" style="color:var(--accent)">+$0</div>
-        <div class="net-balance-sub">You are owed across 0 active groups</div>
+        <div class="net-balance-amount" style="color: {{ 'var(--accent)' if net_balance >= 0 else 'var(--danger, #e05252)' }}">
+          {{ '+' if net_balance >= 0 else '-' }}${{ "%.2f"|format(net_balance|abs) }}
+        </div>
+        <div class="net-balance-sub">
+          {% if net_balance >= 0 %}
+            You are owed across {{ groups|length }} active group{{ 's' if groups|length != 1 }}
+          {% else %}
+            You owe across {{ groups|length }} active group{{ 's' if groups|length != 1 }}
+          {% endif %}
+        </div>
       </div>
     </div>
 
@@ -86,12 +94,29 @@
     </div>
 
     <div class="groups-grid">
-      <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:180px;">
-        <div style="text-align:center; color:var(--text-muted);">
-          <i class="bi bi-people" style="font-size:2rem;"></i>
-          <div style="margin-top:8px;">No groups yet. Create or join one above.</div>
+      {% if groups %}
+        {% for g in groups %}
+        <div class="group-card">
+          <div class="group-card-name">{{ g.name }}</div>
+          <div class="group-card-meta">{{ g.member_count }} member{{ 's' if g.member_count != 1 }} &middot; {{ g.currency }}</div>
+          <div class="group-card-spent">Total spent: ${{ "%.2f"|format(g.total_spent) }}</div>
+          <div class="group-card-balance" style="color: {{ 'var(--accent)' if g.user_balance >= 0 else 'var(--danger, #e05252)' }}">
+            {% if g.user_balance >= 0 %}
+              You are owed ${{ "%.2f"|format(g.user_balance) }}
+            {% else %}
+              You owe ${{ "%.2f"|format(g.user_balance|abs) }}
+            {% endif %}
+          </div>
         </div>
-      </div>
+        {% endfor %}
+      {% else %}
+        <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:180px;">
+          <div style="text-align:center; color:var(--text-muted);">
+            <i class="bi bi-people" style="font-size:2rem;"></i>
+            <div style="margin-top:8px;">No groups yet — create one or join with an invite code.</div>
+          </div>
+        </div>
+      {% endif %}
     </div>
 
   </div>

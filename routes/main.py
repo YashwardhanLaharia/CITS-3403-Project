@@ -1,8 +1,9 @@
 import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
+from sqlalchemy import func
 from extensions import db, login_manager
-from models import User, Group, Membership
+from models import User, Group, Membership, Expense, ExpenseSplit
 
 main_bp = Blueprint('main', __name__)
 
@@ -18,8 +19,49 @@ def load_user(user_id):
 @main_bp.route('/')
 @login_required
 def index():
-    from flask_login import current_user
-    return render_template('index.html', first_name=current_user.first_name)
+    memberships = Membership.query.filter_by(user_id=current_user.id).all()
+
+    groups = []
+    net_balance = 0.0
+
+    for m in memberships:
+        group = m.group
+
+        member_count = Membership.query.filter_by(group_id=group.id).count()
+
+        total_spent = db.session.query(
+            func.coalesce(func.sum(Expense.amount), 0)
+        ).filter_by(group_id=group.id).scalar()
+
+        amount_paid = db.session.query(
+            func.coalesce(func.sum(Expense.amount), 0)
+        ).filter_by(group_id=group.id, paid_by=current_user.id).scalar()
+
+        fair_share = db.session.query(
+            func.coalesce(func.sum(ExpenseSplit.share_amount), 0)
+        ).join(Expense, ExpenseSplit.expense_id == Expense.id).filter(
+            Expense.group_id == group.id,
+            ExpenseSplit.user_id == current_user.id,
+        ).scalar()
+
+        user_balance = float(amount_paid) - float(fair_share)
+        net_balance += user_balance
+
+        groups.append({
+            'id': group.id,
+            'name': group.name,
+            'currency': group.currency,
+            'member_count': member_count,
+            'total_spent': float(total_spent),
+            'user_balance': user_balance,
+        })
+
+    return render_template(
+        'index.html',
+        first_name=current_user.first_name,
+        groups=groups,
+        net_balance=net_balance,
+    )
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])
