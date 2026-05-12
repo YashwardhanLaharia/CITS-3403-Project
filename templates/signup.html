@@ -43,23 +43,27 @@
     {% endwith %}
 
     <form action="{{ url_for('main.signup') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="field-row-2 field-group">
         <div>
           <label class="form-label-sm" for="first-name">First Name</label>
           <input class="form-input" type="text" id="first-name" name="first_name"
-                 placeholder="John" autocomplete="given-name"/>
+                 placeholder="John" autocomplete="given-name"
+                 value="{{ first_name|default('') }}"/>
         </div>
         <div>
           <label class="form-label-sm" for="last-name">Last Name</label>
           <input class="form-input" type="text" id="last-name" name="last_name"
-                 placeholder="Doe" autocomplete="family-name"/>
+                 placeholder="Doe" autocomplete="family-name"
+                 value="{{ last_name|default('') }}"/>
         </div>
       </div>
 
       <div class="field-group">
         <label class="form-label-sm" for="email">Email Address</label>
         <input class="form-input" type="email" id="email" name="email"
-               placeholder="you@example.com" autocomplete="email"/>
+               placeholder="you@example.com" autocomplete="email"
+               value="{{ email|default('') }}"/>
       </div>
 
       <div class="field-group">

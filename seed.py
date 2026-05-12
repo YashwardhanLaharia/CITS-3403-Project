@@ -17,22 +17,24 @@ def seed():
 
         user1 = User(
             email='alice@example.com',
-            password_hash='hashed_password_1',
             first_name='Alice',
             last_name='Anderson'
         )
+        user1.set_password('alice_password')
+
         user2 = User(
             email='bob@example.com',
-            password_hash='hashed_password_2',
             first_name='Bob',
             last_name='Baker'
         )
+        user2.set_password('bob_password')
+
         user3 = User(
             email='charlie@example.com',
-            password_hash='hashed_password_3',
             first_name='Charlie',
             last_name='Cox'
         )
+        user3.set_password('charlie_password')
         db.session.add_all([user1, user2, user3])
         db.session.commit()
 
