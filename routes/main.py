@@ -154,12 +154,6 @@ def logout():
     return redirect(url_for('main.login'))
 
 
-@main_bp.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
-
-
 @main_bp.route('/groups/<int:group_id>')
 @login_required
 def group_dashboard(group_id):

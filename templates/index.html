@@ -68,18 +68,20 @@
     <div class="groups-grid">
       {% if groups %}
         {% for g in groups %}
-        <div class="group-card">
-          <div class="group-card-name">{{ g.name }}</div>
-          <div class="group-card-meta">{{ g.member_count }} member{{ 's' if g.member_count != 1 }} &middot; {{ g.currency }}</div>
-          <div class="group-card-spent">Total spent: ${{ "%.2f"|format(g.total_spent) }}</div>
-          <div class="group-card-balance" style="color: {{ 'var(--accent)' if g.user_balance >= 0 else 'var(--danger, #e05252)' }}">
-            {% if g.user_balance >= 0 %}
-              You are owed ${{ "%.2f"|format(g.user_balance) }}
-            {% else %}
-              You owe ${{ "%.2f"|format(g.user_balance|abs) }}
-            {% endif %}
+        <a href="{{ url_for('main.group_dashboard', group_id=g.id) }}" style="text-decoration:none;color:inherit;">
+          <div class="group-card">
+            <div class="group-card-name">{{ g.name }}</div>
+            <div class="group-card-meta">{{ g.member_count }} member{{ 's' if g.member_count != 1 }} &middot; {{ g.currency }}</div>
+            <div class="group-card-spent">Total spent: ${{ "%.2f"|format(g.total_spent) }}</div>
+            <div class="group-card-balance" style="color: {{ 'var(--accent)' if g.user_balance >= 0 else 'var(--danger, #e05252)' }}">
+              {% if g.user_balance >= 0 %}
+                You are owed ${{ "%.2f"|format(g.user_balance) }}
+              {% else %}
+                You owe ${{ "%.2f"|format(g.user_balance|abs) }}
+              {% endif %}
+            </div>
           </div>
-        </div>
+        </a>
         {% endfor %}
       {% else %}
         <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:180px;">
