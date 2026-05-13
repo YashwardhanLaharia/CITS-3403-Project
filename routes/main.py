@@ -160,6 +160,104 @@ def dashboard():
     return render_template('dashboard.html')
 
 
+@main_bp.route('/groups/<int:group_id>')
+@login_required
+def group_dashboard(group_id):
+    membership = Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    group = membership.group
+
+    memberships = Membership.query.filter_by(group_id=group_id).all()
+    members_by_id = {m.user_id: m.user for m in memberships}
+
+    expenses = (
+        Expense.query
+        .filter_by(group_id=group_id)
+        .order_by(Expense.date.desc())
+        .all()
+    )
+
+    # Per-member balances
+    paid_totals = {}
+    share_totals = {}
+    for uid in members_by_id:
+        paid_totals[uid] = 0.0
+        share_totals[uid] = 0.0
+
+    category_totals = {}
+    total_spent = 0.0
+
+    for expense in expenses:
+        amount = float(expense.amount)
+        total_spent += amount
+        paid_totals[expense.paid_by] = paid_totals.get(expense.paid_by, 0.0) + amount
+        cat = expense.category or 'Other'
+        category_totals[cat] = category_totals.get(cat, 0.0) + amount
+        for split in expense.splits:
+            share_totals[split.user_id] = share_totals.get(split.user_id, 0.0) + float(split.share_amount)
+
+    members = []
+    for uid, user in members_by_id.items():
+        balance = paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
+        members.append({
+            'id': uid,
+            'name': f'{user.first_name} {user.last_name}',
+            'initials': f'{user.first_name[0]}{user.last_name[0]}'.upper(),
+            'paid': paid_totals.get(uid, 0.0),
+            'balance': balance,
+        })
+
+    # Category distribution
+    categories = []
+    for cat, amount in sorted(category_totals.items(), key=lambda x: -x[1]):
+        pct = (amount / total_spent * 100) if total_spent else 0
+        categories.append({'name': cat, 'amount': amount, 'pct': round(pct, 1)})
+
+    # Settlement: greedy algorithm
+    balances = {uid: paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
+                for uid in members_by_id}
+    creditors = sorted(
+        [(uid, bal) for uid, bal in balances.items() if bal > 0.005],
+        key=lambda x: -x[1]
+    )
+    debtors = sorted(
+        [(uid, -bal) for uid, bal in balances.items() if bal < -0.005],
+        key=lambda x: -x[1]
+    )
+
+    transfers = []
+    creditors = [[uid, amt] for uid, amt in creditors]
+    debtors = [[uid, amt] for uid, amt in debtors]
+    i, j = 0, 0
+    while i < len(debtors) and j < len(creditors):
+        debtor_id, debt = debtors[i]
+        creditor_id, credit = creditors[j]
+        amount = min(debt, credit)
+        transfers.append({
+            'from_name': f'{members_by_id[debtor_id].first_name} {members_by_id[debtor_id].last_name}',
+            'to_name': f'{members_by_id[creditor_id].first_name} {members_by_id[creditor_id].last_name}',
+            'amount': round(amount, 2),
+        })
+        debtors[i][1] -= amount
+        creditors[j][1] -= amount
+        if debtors[i][1] < 0.005:
+            i += 1
+        if creditors[j][1] < 0.005:
+            j += 1
+
+    return render_template(
+        'dashboard.html',
+        group=group,
+        members=members,
+        expenses=expenses,
+        categories=categories,
+        transfers=transfers,
+        total_spent=total_spent,
+    )
+
+
 @main_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
