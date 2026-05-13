@@ -266,6 +266,7 @@ def group_dashboard(group_id):
         categories=categories,
         transfers=transfers,
         total_spent=total_spent,
+        expense_categories=EXPENSE_CATEGORIES,
     )
 
 
