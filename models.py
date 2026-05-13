@@ -1,4 +1,4 @@
-import random
+import secrets
 import string
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -49,9 +49,7 @@ class Group(db.Model):
     @staticmethod
     def generate_invite_code():
         while True:
-            code = ''.join(random.choices(
-                string.ascii_uppercase + string.digits, k=8
-            ))
+            code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
             if not Group.query.filter_by(invite_code=code).first():
                 return code
 

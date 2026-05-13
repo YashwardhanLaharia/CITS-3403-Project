@@ -191,9 +191,9 @@ Every meaningful piece of work gets a GitHub issue before anyone starts coding.
 
 ### Naming
 
-For **major tasks**, the title matches the task from the list above:
+For **major tasks**, prefix with `Task-N` and use a plain description (no `[area]` tag):
 ```
-[<area>] <task description>
+Task-<N>: <description>
 ```
 
 For **bugs**:
@@ -207,8 +207,8 @@ For **smaller things** that come up during development:
 ```
 
 **Examples:**
-- `[setup] Project restructure and Flask app factory`
-- `[auth] Implement login, signup, and session management`
+- `Task-1: Project restructure and Flask app factory`
+- `Task-3: Authentication`
 - `[bug] dashboard: crash when group has no expenses`
 - `[expenses] Add category dropdown to expense form`
 
@@ -235,16 +235,16 @@ Every branch merges into `main` via a pull request. No direct pushes.
 
 ### PR naming
 
-Every PR title starts with the issue number in parentheses, then the issue title. If it's a major task, add `Task-N` after the issue number. The PR title should basically match the issue it closes.
+Every PR title starts with the issue number in parentheses. For major tasks, add `Task-N` and a plain description (no `[area]` tag - the task number already tells you what it is). For standalone issues, keep the `[area]` tag from the issue title.
 
 ```
-(#<issue>) Task-<N>: <issue title>     <- major task
+(#<issue>) Task-<N>: <description>     <- major task
 (#<issue>) <issue title>               <- everything else
 ```
 
 **Examples:**
-- `(#8) Task-3: [auth] Implement login, signup, and session management`
-- `(#14) Task-5: [expenses] Expenses, settlements, and dashboard`
+- `(#8) Task-3: Implement login, signup, and session management`
+- `(#14) Task-5: Expenses, settlements, and dashboard`
 - `(#21) [bug] dashboard: fix crash when group has no expenses`
 - `(#25) [ui] Add loading spinner to expense form`
 
