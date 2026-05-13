@@ -438,6 +438,18 @@ def add_expense(group_id):
         date=expense_date,
     )
     db.session.add(expense)
+    db.session.flush()
+
+    members = Membership.query.filter_by(group_id=group_id).all()
+    share = round(amount / len(members), 2)
+    for m in members:
+        split = ExpenseSplit(
+            expense_id=expense.id,
+            user_id=m.user_id,
+            share_amount=share,
+        )
+        db.session.add(split)
+
     db.session.commit()
 
     flash(f'Expense "{description}" added successfully!', 'success')
