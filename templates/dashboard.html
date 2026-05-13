@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title_suffix %} – Dashboard{% endblock %}
+{% block title_suffix %} – {{ group.name if group else 'Dashboard' }}{% endblock %}
 
 {% block body %}
 {% include "_sidebar.html" %}
@@ -22,8 +22,13 @@
 
     <div class="welcome-row">
       <div>
-        <div class="welcome-title">{{ group_name|default('Group Dashboard') }}</div>
-        <div class="welcome-sub">{{ member_count|default(0) }} members</div>
+        <div class="welcome-title">{{ group.name }}</div>
+        <div class="welcome-sub">{{ members|length }} member{{ 's' if members|length != 1 }} &middot; {{ group.currency }} &middot; Total spent: ${{ "%.2f"|format(total_spent) }}</div>
+      </div>
+      <div class="net-balance-card">
+        <div class="net-balance-label">Invite Code</div>
+        <div class="net-balance-amount" style="font-size:1.4rem; letter-spacing:0.15em;">{{ group.invite_code }}</div>
+        <div class="net-balance-sub">Share this code to invite members</div>
       </div>
     </div>
 
@@ -35,13 +40,63 @@
     </div>
 
     <div class="groups-grid">
-      <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:140px;">
-        <div style="text-align:center; color:var(--text-muted);">
-          <i class="bi bi-cash-stack" style="font-size:2rem;"></i>
-          <div style="margin-top:8px;">No expenses recorded yet.</div>
+      {% if members %}
+        {% for m in members %}
+        <div class="group-card">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <div class="avatar-sm">{{ m.initials }}</div>
+            <div class="group-card-name">{{ m.name }}</div>
+          </div>
+          <div class="group-card-meta">Paid: ${{ "%.2f"|format(m.paid) }}</div>
+          <div class="group-card-balance" style="color: {{ 'var(--accent)' if m.balance >= 0 else 'var(--danger, #e05252)' }}">
+            {% if m.balance >= 0 %}
+              Owed ${{ "%.2f"|format(m.balance) }}
+            {% else %}
+              Owes ${{ "%.2f"|format(m.balance|abs) }}
+            {% endif %}
+          </div>
         </div>
+        {% endfor %}
+      {% else %}
+        <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:140px;">
+          <div style="text-align:center; color:var(--text-muted);">
+            <i class="bi bi-cash-stack" style="font-size:2rem;"></i>
+            <div style="margin-top:8px;">No expenses recorded yet.</div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if categories %}
+    <div class="section-header">
+      <div>
+        <div class="section-title">Expense Distribution</div>
+        <div class="section-sub">Breakdown by category</div>
       </div>
     </div>
+
+    <div class="archived-grid">
+      {% for cat in categories %}
+      <div class="archived-card">
+        <div class="archived-icon">
+          {% if cat.name == 'Food' %}🍔
+          {% elif cat.name == 'Transport' %}🚗
+          {% elif cat.name == 'Accommodation' %}🏠
+          {% elif cat.name == 'Entertainment' %}🎬
+          {% elif cat.name == 'Utilities' %}💡
+          {% else %}📦{% endif %}
+        </div>
+        <div style="flex:1;">
+          <div class="archived-name">{{ cat.name }}</div>
+          <div class="archived-meta">${{ "%.2f"|format(cat.amount) }} &middot; {{ cat.pct }}%</div>
+          <div style="margin-top:6px; height:4px; background:var(--border); border-radius:2px;">
+            <div style="width:{{ cat.pct }}%; height:100%; background:var(--accent); border-radius:2px;"></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="section-header">
       <div>
@@ -51,13 +106,34 @@
     </div>
 
     <div class="archived-grid">
-      <div class="archived-card">
-        <div class="archived-icon">📝</div>
-        <div>
-          <div class="archived-name">No activity yet</div>
-          <div class="archived-meta">Add an expense to get started</div>
+      {% if expenses %}
+        {% for e in expenses %}
+        <div class="archived-card">
+          <div class="archived-icon">
+            {% if e.category == 'Food' %}🍔
+            {% elif e.category == 'Transport' %}🚗
+            {% elif e.category == 'Accommodation' %}🏠
+            {% elif e.category == 'Entertainment' %}🎬
+            {% elif e.category == 'Utilities' %}💡
+            {% else %}📦{% endif %}
+          </div>
+          <div>
+            <div class="archived-name">{{ e.description }}</div>
+            <div class="archived-meta">
+              ${{ "%.2f"|format(e.amount) }} &middot; {{ e.category }} &middot; {{ e.date.strftime('%d %b %Y') }} &middot; paid by {{ e.payer.first_name }}
+            </div>
+          </div>
         </div>
-      </div>
+        {% endfor %}
+      {% else %}
+        <div class="archived-card">
+          <div class="archived-icon">📝</div>
+          <div>
+            <div class="archived-name">No activity yet</div>
+            <div class="archived-meta">Add an expense to get started</div>
+          </div>
+        </div>
+      {% endif %}
     </div>
 
     <div class="section-header">
@@ -68,15 +144,29 @@
     </div>
 
     <div class="archived-grid">
-      <div class="archived-card">
-        <div class="archived-icon"><i class="bi bi-arrow-left-right"></i></div>
-        <div>
-          <div class="archived-name">All settled up</div>
-          <div class="archived-meta">No outstanding balances</div>
+      {% if transfers %}
+        {% for t in transfers %}
+        <div class="archived-card">
+          <div class="archived-icon"><i class="bi bi-arrow-right-circle"></i></div>
+          <div>
+            <div class="archived-name">{{ t.from_name }} → {{ t.to_name }}</div>
+            <div class="archived-meta">${{ "%.2f"|format(t.amount) }}</div>
+          </div>
         </div>
-      </div>
+        {% endfor %}
+      {% else %}
+        <div class="archived-card">
+          <div class="archived-icon"><i class="bi bi-arrow-left-right"></i></div>
+          <div>
+            <div class="archived-name">All settled up</div>
+            <div class="archived-meta">No outstanding balances</div>
+          </div>
+        </div>
+      {% endif %}
     </div>
 
   </div>
 </div>
+
+{% include '_create_group_modal.html' %}
 {% endblock %}

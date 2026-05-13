@@ -27,48 +27,34 @@
       </div>
       <div class="net-balance-card">
         <div class="net-balance-label">Net Balance (All Groups)</div>
-        <div class="net-balance-amount" style="color:var(--accent)">+$0</div>
-        <div class="net-balance-sub">You are owed across 0 active groups</div>
+        <div class="net-balance-amount" style="color: {{ 'var(--accent)' if net_balance >= 0 else 'var(--danger, #e05252)' }}">
+          {{ '+' if net_balance >= 0 else '-' }}${{ "%.2f"|format(net_balance|abs) }}
+        </div>
+        <div class="net-balance-sub">
+          {% if net_balance >= 0 %}
+            You are owed across {{ groups|length }} active group{{ 's' if groups|length != 1 }}
+          {% else %}
+            You owe across {{ groups|length }} active group{{ 's' if groups|length != 1 }}
+          {% endif %}
+        </div>
       </div>
     </div>
 
     <div class="action-row">
 
-      <div class="form-card">
-        <div class="form-card-title"><i class="bi bi-people-fill"></i> Create a New Group</div>
-        <div class="form-row-2">
-          <div>
-            <label class="form-label-sm">Group Name</label>
-            <input class="form-input" type="text" placeholder="e.g. Summer Roadtrip"/>
-          </div>
-          <div>
-            <label class="form-label-sm">Currency</label>
-            <select class="form-select">
-              <option>AUD ($)</option>
-              <option>USD ($)</option>
-              <option>EUR (&euro;)</option>
-              <option>GBP (&pound;)</option>
-            </select>
-          </div>
-        </div>
-        <label class="form-label-sm">Invite Members (Email)</label>
-        <div class="invite-row">
-          <input class="form-input" type="email" placeholder="friend@example.com"/>
-          <button class="btn-add-member">Add</button>
-        </div>
-        <button class="btn-primary-action">
-          <i class="bi bi-plus-circle-fill"></i> Create Group
-        </button>
-      </div>
+      {% include '_create_group_modal.html' %}
 
-      <div class="join-card">
-        <div class="join-card-title"><i class="bi bi-link-45deg"></i> Join a Group</div>
-        <div class="join-card-sub">Have an invite code? Enter it below to join an existing group.</div>
-        <div class="code-input-wrap">
-          <input class="code-input" type="text" placeholder="X7-R92-K4" maxlength="10"/>
+      <form action="{{ url_for('main.join_group') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="join-card">
+          <div class="join-card-title"><i class="bi bi-link-45deg"></i> Join a Group</div>
+          <div class="join-card-sub">Have an invite code? Enter it below to join an existing group.</div>
+          <div class="code-input-wrap">
+            <input class="code-input" type="text" name="invite_code" placeholder="X7-R92-K4" maxlength="10"/>
+          </div>
+          <button type="submit" class="btn-join"><i class="bi bi-arrow-right-circle"></i> Join Now</button>
         </div>
-        <button class="btn-join"><i class="bi bi-arrow-right-circle"></i> Join Now</button>
-      </div>
+      </form>
     </div>
 
     <div class="section-header">
@@ -80,12 +66,31 @@
     </div>
 
     <div class="groups-grid">
-      <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:180px;">
-        <div style="text-align:center; color:var(--text-muted);">
-          <i class="bi bi-people" style="font-size:2rem;"></i>
-          <div style="margin-top:8px;">No groups yet. Create or join one above.</div>
+      {% if groups %}
+        {% for g in groups %}
+        <a href="{{ url_for('main.group_dashboard', group_id=g.id) }}" style="text-decoration:none;color:inherit;">
+          <div class="group-card">
+            <div class="group-card-name">{{ g.name }}</div>
+            <div class="group-card-meta">{{ g.member_count }} member{{ 's' if g.member_count != 1 }} &middot; {{ g.currency }}</div>
+            <div class="group-card-spent">Total spent: ${{ "%.2f"|format(g.total_spent) }}</div>
+            <div class="group-card-balance" style="color: {{ 'var(--accent)' if g.user_balance >= 0 else 'var(--danger, #e05252)' }}">
+              {% if g.user_balance >= 0 %}
+                You are owed ${{ "%.2f"|format(g.user_balance) }}
+              {% else %}
+                You owe ${{ "%.2f"|format(g.user_balance|abs) }}
+              {% endif %}
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="group-card" style="border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; min-height:180px;">
+          <div style="text-align:center; color:var(--text-muted);">
+            <i class="bi bi-people" style="font-size:2rem;"></i>
+            <div style="margin-top:8px;">No groups yet — create one or join with an invite code.</div>
+          </div>
         </div>
-      </div>
+      {% endif %}
     </div>
 
   </div>

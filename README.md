@@ -46,6 +46,9 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
+# Set up the database
+flask db upgrade
+
 # Run the app
 flask run
 ```
