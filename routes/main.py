@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, date
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy import func
@@ -382,6 +383,34 @@ def create_group():
         flash('Failed to create group. Please try again.', 'error')
 
     return redirect(url_for('main.index'))
+
+
+EXPENSE_CATEGORIES = ['Food', 'Transport', 'Accommodation', 'Entertainment', 'Utilities', 'Other']
+
+
+@main_bp.route('/groups/<int:group_id>/expenses/add', methods=['POST'])
+def add_expense(group_id):
+    membership = Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    description = request.form.get('description', '').strip()
+    amount_str = request.form.get('amount', '').strip()
+    category = request.form.get('category', '').strip()
+    date_str = request.form.get('expense_date', '').strip()
+
+    expense = Expense(
+        group_id=group_id,
+        paid_by=current_user.id,
+        description=description,
+        amount=float(amount_str),
+        category=category,
+        date=date.today(),
+    )
+    db.session.add(expense)
+    db.session.commit()
+
+    return redirect(url_for('main.group_dashboard', group_id=group_id))
 
 
 @main_bp.errorhandler(404)
