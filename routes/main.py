@@ -389,6 +389,7 @@ EXPENSE_CATEGORIES = ['Food', 'Transport', 'Accommodation', 'Entertainment', 'Ut
 
 
 @main_bp.route('/groups/<int:group_id>/expenses/add', methods=['POST'])
+@login_required
 def add_expense(group_id):
     membership = Membership.query.filter_by(
         group_id=group_id, user_id=current_user.id
@@ -441,7 +442,7 @@ def add_expense(group_id):
     db.session.flush()
 
     members = Membership.query.filter_by(group_id=group_id).all()
-    share = round(amount / len(memberships), 2)
+    share = round(amount / len(members), 2)
     for m in members:
         split = ExpenseSplit(
             expense_id=expense.id,
