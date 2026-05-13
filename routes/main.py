@@ -441,7 +441,7 @@ def add_expense(group_id):
     db.session.flush()
 
     members = Membership.query.filter_by(group_id=group_id).all()
-    share = round(amount / len(members), 2)
+    share = round(amount / len(memberships), 2)
     for m in members:
         split = ExpenseSplit(
             expense_id=expense.id,
