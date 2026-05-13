@@ -20,39 +20,55 @@ def load_user(user_id):
 @login_required
 def index():
     memberships = Membership.query.filter_by(user_id=current_user.id).all()
+    group_ids = [m.group_id for m in memberships]
+    groups_by_id = {m.group_id: m.group for m in memberships}
+
+    if not group_ids:
+        return render_template('index.html', first_name=current_user.first_name, groups=[], net_balance=0.0)
+
+    member_counts = dict(
+        db.session.query(Membership.group_id, func.count(Membership.id))
+        .filter(Membership.group_id.in_(group_ids))
+        .group_by(Membership.group_id)
+        .all()
+    )
+
+    spent_by_group = dict(
+        db.session.query(Expense.group_id, func.coalesce(func.sum(Expense.amount), 0))
+        .filter(Expense.group_id.in_(group_ids))
+        .group_by(Expense.group_id)
+        .all()
+    )
+
+    paid_by_user = dict(
+        db.session.query(Expense.group_id, func.coalesce(func.sum(Expense.amount), 0))
+        .filter(Expense.group_id.in_(group_ids), Expense.paid_by == current_user.id)
+        .group_by(Expense.group_id)
+        .all()
+    )
+
+    fair_shares = dict(
+        db.session.query(Expense.group_id, func.coalesce(func.sum(ExpenseSplit.share_amount), 0))
+        .join(ExpenseSplit, ExpenseSplit.expense_id == Expense.id)
+        .filter(Expense.group_id.in_(group_ids), ExpenseSplit.user_id == current_user.id)
+        .group_by(Expense.group_id)
+        .all()
+    )
 
     groups = []
     net_balance = 0.0
 
-    for m in memberships:
-        group = m.group
-
-        member_count = Membership.query.filter_by(group_id=group.id).count()
-
-        total_spent = db.session.query(
-            func.coalesce(func.sum(Expense.amount), 0)
-        ).filter_by(group_id=group.id).scalar()
-
-        amount_paid = db.session.query(
-            func.coalesce(func.sum(Expense.amount), 0)
-        ).filter_by(group_id=group.id, paid_by=current_user.id).scalar()
-
-        fair_share = db.session.query(
-            func.coalesce(func.sum(ExpenseSplit.share_amount), 0)
-        ).join(Expense, ExpenseSplit.expense_id == Expense.id).filter(
-            Expense.group_id == group.id,
-            ExpenseSplit.user_id == current_user.id,
-        ).scalar()
-
-        user_balance = float(amount_paid) - float(fair_share)
+    for gid in group_ids:
+        group = groups_by_id[gid]
+        user_balance = float(paid_by_user.get(gid, 0)) - float(fair_shares.get(gid, 0))
         net_balance += user_balance
 
         groups.append({
             'id': group.id,
             'name': group.name,
             'currency': group.currency,
-            'member_count': member_count,
-            'total_spent': float(total_spent),
+            'member_count': member_counts.get(gid, 0),
+            'total_spent': float(spent_by_group.get(gid, 0)),
             'user_balance': user_balance,
         })
 
