@@ -399,17 +399,48 @@ def add_expense(group_id):
     category = request.form.get('category', '').strip()
     date_str = request.form.get('expense_date', '').strip()
 
+    errors = []
+    if not description:
+        errors.append('Description is required.')
+
+    amount = None
+    if not amount_str:
+        errors.append('Amount is required.')
+    else:
+        try:
+            amount = float(amount_str)
+            if amount <= 0:
+                errors.append('Amount must be a positive number.')
+        except ValueError:
+            errors.append('Amount must be a valid number.')
+
+    if category not in EXPENSE_CATEGORIES:
+        errors.append('Please select a valid category.')
+
+    expense_date = date.today()
+    if date_str:
+        try:
+            expense_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            errors.append('Invalid date format.')
+
+    if errors:
+        for e in errors:
+            flash(e, 'error')
+        return redirect(url_for('main.group_dashboard', group_id=group_id))
+
     expense = Expense(
         group_id=group_id,
         paid_by=current_user.id,
         description=description,
-        amount=float(amount_str),
+        amount=amount,
         category=category,
-        date=date.today(),
+        date=expense_date,
     )
     db.session.add(expense)
     db.session.commit()
 
+    flash(f'Expense "{description}" added successfully!', 'success')
     return redirect(url_for('main.group_dashboard', group_id=group_id))
 
 
