@@ -430,6 +430,26 @@ def add_expense(group_id):
         except ValueError:
             errors.append('Invalid date format.')
 
+    members = Membership.query.filter_by(group_id=group_id).all()
+
+    split_amounts = {}
+    if split_type == 'custom' and amount is not None:
+        total_split = 0.0
+        for m in members:
+            raw = request.form.get(f'split_amount_{m.user_id}', '0')
+            try:
+                share = round(float(raw), 2)
+            except ValueError:
+                errors.append('All split amounts must be valid numbers.')
+                break
+            if share < 0:
+                errors.append('Split amounts cannot be negative.')
+                break
+            split_amounts[m.user_id] = share
+            total_split += share
+        if not errors and abs(total_split - amount) > 0.01:
+            errors.append('Split amounts must add up to the total expense amount.')
+
     if errors:
         for e in errors:
             flash(e, 'error')
@@ -447,19 +467,12 @@ def add_expense(group_id):
     db.session.add(expense)
     db.session.flush()
 
-    members = Membership.query.filter_by(group_id=group_id).all()
-
     if split_type == 'custom':
         for m in members:
-            raw = request.form.get(f'split_amount_{m.user_id}', '0')
-            try:
-                share = round(float(raw), 2)
-            except ValueError:
-                share = 0.0
             split = ExpenseSplit(
                 expense_id=expense.id,
                 user_id=m.user_id,
-                share_amount=share,
+                share_amount=split_amounts[m.user_id],
             )
             db.session.add(split)
     else:
