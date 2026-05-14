@@ -458,17 +458,6 @@ def add_expense(group_id):
     if not description:
         errors.append('Description is required.')
 
-    amount = None
-    if not amount_str:
-        errors.append('Amount is required.')
-    else:
-        try:
-            amount = float(amount_str)
-            if amount <= 0:
-                errors.append('Amount must be a positive number.')
-        except ValueError:
-            errors.append('Amount must be a valid number.')
-
     if category not in EXPENSE_CATEGORIES:
         errors.append('Please select a valid category.')
 
@@ -486,8 +475,9 @@ def add_expense(group_id):
 
     members = Membership.query.filter_by(group_id=group_id).all()
 
+    amount = None
     split_amounts = {}
-    if split_type == 'custom' and amount is not None:
+    if split_type == 'custom':
         total_split = 0.0
         for m in members:
             raw = request.form.get(f'split_amount_{m.user_id}', '0')
@@ -501,8 +491,21 @@ def add_expense(group_id):
                 break
             split_amounts[m.user_id] = share
             total_split += share
-        if not errors and abs(total_split - amount) > 0.01:
-            errors.append('Split amounts must add up to the total expense amount.')
+        if not errors:
+            if total_split <= 0:
+                errors.append('Total split amount must be greater than zero.')
+            else:
+                amount = total_split
+    else:
+        if not amount_str:
+            errors.append('Amount is required.')
+        else:
+            try:
+                amount = float(amount_str)
+                if amount <= 0:
+                    errors.append('Amount must be a positive number.')
+            except ValueError:
+                errors.append('Amount must be a valid number.')
 
     if errors:
         if is_ajax:
