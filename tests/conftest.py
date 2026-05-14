@@ -28,8 +28,6 @@ def _build_unique_email(prefix='user'):
 
 @pytest.fixture
 def user_factory():
-    created = []
-
     def _create_user(**kwargs):
         defaults = {
             'email': _build_unique_email('test'),
@@ -43,14 +41,10 @@ def user_factory():
         user.set_password(password)
         _db.session.add(user)
         _db.session.commit()
-        created.append(user)
         return user, password
 
     yield _create_user
 
-    for user in created:
-        _db.session.delete(user)
-    _db.session.commit()
 
 
 @pytest.fixture
