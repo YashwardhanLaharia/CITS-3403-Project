@@ -1714,4 +1714,46 @@
   .modal-content .modal-footer {
     padding: 0.75rem 1rem;
   }
+
+  /* Typography — scale down hero titles on mobile */
+  .hero-title,
+  .welcome-title {
+    font-size: 1.6rem;
+  }
+
+  /* Typography — scale down spending amount on mobile */
+  .spending-amount {
+    font-size: 1.4rem;
+  }
+
+  /* Spacing — reduce page body padding on mobile */
+  .page-body {
+    padding: 16px;
+  }
+
+  /* Spacing — reduce topnav padding on mobile */
+  .topnav {
+    padding: 12px 16px;
+  }
+
+  /* Spacing — reduce net balance card padding on mobile */
+  .net-balance-card {
+    padding: 12px 16px;
+    width: 100%;
+  }
+
+  /* Spacing — reduce spending card padding on mobile */
+  .spending-card {
+    padding: 14px 16px;
+  }
+
+  /* Typography — scale down section titles on mobile */
+  .section-title {
+    font-size: 0.9rem;
+  }
+
+  /* Topnav — hide search bar on mobile to save space */
+  .search-bar {
+    display: none;
+  }
 }
