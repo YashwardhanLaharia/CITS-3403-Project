@@ -16,12 +16,12 @@
 
   <div class="page-body">
 
-    <div class="welcome-row">
+    <div class="welcome-row" style="flex-wrap: wrap;">
       <div>
         <div class="welcome-title">Welcome back,<br><span>{{ first_name|default('User') }}</span>.</div>
         <div class="welcome-sub">Manage your shared expenses and keep things fair across all your groups.</div>
       </div>
-      <div class="net-balance-card">
+      <div class="net-balance-card" style="min-width: 0;">
         <div class="net-balance-label">Net Balance (All Groups)</div>
         <div class="net-balance-amount" style="color: {{ 'var(--accent)' if net_balance >= 0 else 'var(--danger, #e05252)' }}">
           {{ '+' if net_balance >= 0 else '-' }}${{ "%.2f"|format(net_balance|abs) }}
