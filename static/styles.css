@@ -1693,4 +1693,25 @@
     min-width: 0;
     width: 100%;
   }
+
+  /* Modals — full width with small margins on mobile */
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  /* Modals — reduce padding inside modal body on mobile */
+  .modal-content .modal-body {
+    padding: 1rem !important;
+  }
+
+  /* Modals — stack two column form rows on mobile */
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modals — reduce modal footer padding on mobile */
+  .modal-content .modal-footer {
+    padding: 0.75rem 1rem;
+  }
 }
