@@ -30,6 +30,26 @@
             <label class="form-label-sm">Date</label>
             <input class="form-input" type="date" name="expense_date"/>
           </div>
+          <div style="margin-top:1rem;">
+            <label class="form-label-sm">Split Type</label>
+            <div style="display:flex;gap:1rem;margin-top:0.25rem;">
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+                <input type="radio" name="split_type" value="equal" checked onchange="toggleSplitInputs()"> Equal
+              </label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+                <input type="radio" name="split_type" value="custom" onchange="toggleSplitInputs()"> Custom
+              </label>
+            </div>
+          </div>
+          <div id="customSplitInputs" style="display:none;margin-top:1rem;">
+            <label class="form-label-sm">Amount per person</label>
+            {% for member in members %}
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+              <span style="min-width:120px;">{{ member.name }}</span>
+              <input class="form-input" type="number" name="split_amount_{{ member.id }}" step="0.01" min="0" placeholder="0.00" style="flex:1;"/>
+            </div>
+            {% endfor %}
+          </div>
         </div>
         <div class="modal-footer" style="border-top:1px solid var(--border);">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -41,3 +61,10 @@
     </div>
   </div>
 </div>
+
+<script>
+function toggleSplitInputs() {
+  const splitType = document.querySeletor('input[name="split_type"]:checked').value;
+  document.getElementById('customSplitInputs').style.display = splitType === 'custom' ? 'block' : 'none';
+}
+</script>

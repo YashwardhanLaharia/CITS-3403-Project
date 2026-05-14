@@ -438,6 +438,7 @@ def add_expense(group_id):
         amount=amount,
         category=category,
         date=expense_date,
+        split_type='equal',
     )
     db.session.add(expense)
     db.session.flush()
