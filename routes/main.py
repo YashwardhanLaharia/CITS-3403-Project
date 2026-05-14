@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, date
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy import func
 from extensions import db, login_manager
@@ -171,32 +171,16 @@ def logout():
     return redirect(url_for('main.login'))
 
 
-@main_bp.route('/groups/<int:group_id>')
-@login_required
-def group_dashboard(group_id):
-    membership = Membership.query.filter_by(
-        group_id=group_id, user_id=current_user.id
-    ).first_or_404()
+def _compute_group_data(members_by_id, expenses):
+    """Compute per-member balances, category distribution, and settlement transfers.
 
-    group = membership.group
-
-    memberships = Membership.query.filter_by(group_id=group_id).all()
-    members_by_id = {m.user_id: m.user for m in memberships}
-
-    expenses = (
-        Expense.query
-        .filter_by(group_id=group_id)
-        .order_by(Expense.date.desc())
-        .all()
-    )
-
-    # Per-member balances
-    paid_totals = {}
-    share_totals = {}
-    for uid in members_by_id:
-        paid_totals[uid] = 0.0
-        share_totals[uid] = 0.0
-
+    Returns (members, categories, transfers, total_spent).
+    members dicts have keys: id, name, initials, paid, balance.
+    categories dicts have keys: name, amount, pct.
+    transfers dicts have keys: from_name, to_name, amount.
+    """
+    paid_totals = {uid: 0.0 for uid in members_by_id}
+    share_totals = {uid: 0.0 for uid in members_by_id}
     category_totals = {}
     total_spent = 0.0
 
@@ -209,38 +193,29 @@ def group_dashboard(group_id):
         for split in expense.splits:
             share_totals[split.user_id] = share_totals.get(split.user_id, 0.0) + float(split.share_amount)
 
-    members = []
-    for uid, user in members_by_id.items():
-        balance = paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
-        members.append({
+    members = [
+        {
             'id': uid,
             'name': f'{user.first_name} {user.last_name}',
             'initials': f'{user.first_name[0]}{user.last_name[0]}'.upper(),
             'paid': paid_totals.get(uid, 0.0),
-            'balance': balance,
-        })
+            'balance': paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0),
+        }
+        for uid, user in members_by_id.items()
+    ]
 
-    # Category distribution
-    categories = []
-    for cat, amount in sorted(category_totals.items(), key=lambda x: -x[1]):
-        pct = (amount / total_spent * 100) if total_spent else 0
-        categories.append({'name': cat, 'amount': amount, 'pct': round(pct, 1)})
+    categories = [
+        {'name': cat, 'amount': amount, 'pct': round(amount / total_spent * 100, 1) if total_spent else 0}
+        for cat, amount in sorted(category_totals.items(), key=lambda x: -x[1])
+    ]
 
-    # Settlement: greedy algorithm
-    balances = {uid: paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
-                for uid in members_by_id}
-    creditors = sorted(
-        [(uid, bal) for uid, bal in balances.items() if bal > 0.005],
-        key=lambda x: -x[1]
-    )
-    debtors = sorted(
-        [(uid, -bal) for uid, bal in balances.items() if bal < -0.005],
-        key=lambda x: -x[1]
-    )
+    # Greedy settlement: repeatedly match largest debtor with largest creditor
+    raw_balances = {uid: paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
+                    for uid in members_by_id}
+    creditors = [[uid, bal] for uid, bal in sorted(raw_balances.items(), key=lambda x: -x[1]) if bal > 0.005]
+    debtors = [[uid, -bal] for uid, bal in sorted(raw_balances.items(), key=lambda x: x[1]) if bal < -0.005]
 
     transfers = []
-    creditors = [[uid, amt] for uid, amt in creditors]
-    debtors = [[uid, amt] for uid, amt in debtors]
     i, j = 0, 0
     while i < len(debtors) and j < len(creditors):
         debtor_id, debt = debtors[i]
@@ -258,6 +233,22 @@ def group_dashboard(group_id):
         if creditors[j][1] < 0.005:
             j += 1
 
+    return members, categories, transfers, total_spent
+
+
+@main_bp.route('/groups/<int:group_id>')
+@login_required
+def group_dashboard(group_id):
+    membership = Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    group = membership.group
+    members_by_id = {m.user_id: m.user for m in Membership.query.filter_by(group_id=group_id).all()}
+    expenses = Expense.query.filter_by(group_id=group_id).order_by(Expense.date.desc()).all()
+
+    members, categories, transfers, total_spent = _compute_group_data(members_by_id, expenses)
+
     return render_template(
         'dashboard.html',
         group=group,
@@ -268,6 +259,67 @@ def group_dashboard(group_id):
         total_spent=total_spent,
         expense_categories=EXPENSE_CATEGORIES,
     )
+
+
+@main_bp.route('/groups/<int:group_id>/data')
+@login_required
+def group_data(group_id):
+    Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    group = Group.query.get_or_404(group_id)
+    members_by_id = {m.user_id: m.user for m in Membership.query.filter_by(group_id=group_id).all()}
+    expenses = Expense.query.filter_by(group_id=group_id).order_by(Expense.date.desc()).all()
+
+    members, categories, transfers, total_spent = _compute_group_data(members_by_id, expenses)
+
+    return jsonify({
+        'group': {
+            'id': group.id,
+            'name': group.name,
+            'currency': group.currency,
+            'invite_code': group.invite_code,
+            'total_spent': total_spent,
+        },
+        'members': [
+            {
+                'id': m['id'],
+                'name': m['name'],
+                'initials': m['initials'],
+                'amount_paid': m['paid'],
+                'balance': m['balance'],
+            }
+            for m in members
+        ],
+        'expenses': [
+            {
+                'id': e.id,
+                'description': e.description,
+                'amount': float(e.amount),
+                'category': e.category,
+                'date': e.date.strftime('%Y-%m-%d'),
+                'paid_by': f'{e.payer.first_name} {e.payer.last_name}',
+            }
+            for e in expenses
+        ],
+        'categories': [
+            {
+                'name': c['name'],
+                'amount': c['amount'],
+                'percentage': c['pct'],
+            }
+            for c in categories
+        ],
+        'transfers': [
+            {
+                'from': t['from_name'],
+                'to': t['to_name'],
+                'amount': t['amount'],
+            }
+            for t in transfers
+        ],
+    })
 
 
 @main_bp.route('/profile', methods=['GET', 'POST'])
