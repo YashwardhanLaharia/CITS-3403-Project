@@ -69,4 +69,10 @@ function toggleSplitInputs() {
 }
 
 document.querySelector('input[name="expense_date"]').valueAsDate = new Date();
+
+document.getElementById('addExpenseModal').addEventListener('hidden.bs.modal', function () {
+  this.querySelector('form').reset();
+  document.getElementById('customSplitInputs').style.display = 'none';
+  document.querySelector('input[name="expense_date"]').valueAsDate = new Date();
+});
 </script>
