@@ -452,6 +452,7 @@ def add_expense(group_id):
     amount_str = request.form.get('amount', '').strip()
     category = request.form.get('category', '').strip()
     date_str = request.form.get('expense_date', '').strip()
+    split_type = request.form.get('split_type', 'equal')
 
     errors = []
     if not description:
@@ -471,6 +472,9 @@ def add_expense(group_id):
     if category not in EXPENSE_CATEGORIES:
         errors.append('Please select a valid category.')
 
+    if split_type not in ('equal', 'custom'):
+        split_type = 'equal'
+
     expense_date = date.today()
     if date_str:
         try:
@@ -479,6 +483,26 @@ def add_expense(group_id):
             errors.append('Invalid date format.')
 
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    members = Membership.query.filter_by(group_id=group_id).all()
+
+    split_amounts = {}
+    if split_type == 'custom' and amount is not None:
+        total_split = 0.0
+        for m in members:
+            raw = request.form.get(f'split_amount_{m.user_id}', '0')
+            try:
+                share = round(float(raw), 2)
+            except ValueError:
+                errors.append('All split amounts must be valid numbers.')
+                break
+            if share < 0:
+                errors.append('Split amounts cannot be negative.')
+                break
+            split_amounts[m.user_id] = share
+            total_split += share
+        if not errors and abs(total_split - amount) > 0.01:
+            errors.append('Split amounts must add up to the total expense amount.')
 
     if errors:
         if is_ajax:
@@ -494,19 +518,28 @@ def add_expense(group_id):
         amount=amount,
         category=category,
         date=expense_date,
+        split_type=split_type,
     )
     db.session.add(expense)
     db.session.flush()
 
-    members = Membership.query.filter_by(group_id=group_id).all()
-    share = round(amount / len(members), 2)
-    for m in members:
-        split = ExpenseSplit(
-            expense_id=expense.id,
-            user_id=m.user_id,
-            share_amount=share,
-        )
-        db.session.add(split)
+    if split_type == 'custom':
+        for m in members:
+            split = ExpenseSplit(
+                expense_id=expense.id,
+                user_id=m.user_id,
+                share_amount=split_amounts[m.user_id],
+            )
+            db.session.add(split)
+    else:
+        share = round(amount / len(members), 2)
+        for m in members:
+            split = ExpenseSplit(
+                expense_id=expense.id,
+                user_id=m.user_id,
+                share_amount=share,
+            )
+            db.session.add(split)
 
     db.session.commit()
 
