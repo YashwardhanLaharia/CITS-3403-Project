@@ -354,7 +354,6 @@ def profile():
             current_user.last_name = last_name
             if new_password:
                 current_user.set_password(new_password)
-                from flask_login import logout_user
                 db.session.commit()
                 logout_user()
                 flash('Profile updated. Please log in with your new password.', 'success')
@@ -373,6 +372,27 @@ def profile():
                            last_name=current_user.last_name,
                            email=current_user.email,
                            created_at=current_user.created_at)
+
+
+@main_bp.route('/profile/delete', methods=['POST'])
+@login_required
+def delete_account():
+    delete_password = request.form.get('delete_password', '')
+    if not delete_password:
+        flash('Current password is required to delete your account.', 'error')
+        return redirect(url_for('main.profile'))
+
+    if not current_user.check_password(delete_password):
+        flash('The password you entered is incorrect.', 'error')
+        return redirect(url_for('main.profile'))
+
+    current_user.status = 'deleted'
+    current_user.deleted_at = datetime.utcnow()
+    current_user.email = None
+    db.session.commit()
+    logout_user()
+    flash('Your account was deleted. The data you contributed remains in shared groups.', 'info')
+    return redirect(url_for('main.login'))
 
 
 @main_bp.route('/groups/join', methods=['POST'])
