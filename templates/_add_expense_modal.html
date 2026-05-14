@@ -1,0 +1,78 @@
+<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" id="addExpenseModalLabel"><i class="bi bi-receipt"></i> Add Expense</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('main.add_expense', group_id=group.id) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="modal-body" style="padding:1.5rem;">
+          <div style="margin-bottom:1rem;">
+            <label class="form-label-sm">Description</label>
+            <input class="form-input" type="text" name="description" placeholder="e.g. Groceries" required/>
+          </div>
+          <div class="form-row-2">
+            <div>
+              <label class="form-label-sm">Amount ($)</label>
+              <input class="form-input" type="number" name="amount" step="0.01" min="0.01" placeholder="0.00" required/>
+            </div>
+            <div>
+              <label class="form-label-sm">Category</label>
+              <select class="form-select" name="category">
+                {% for cat in expense_categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:1rem;">
+            <label class="form-label-sm">Date</label>
+            <input class="form-input" type="date" name="expense_date"/>
+          </div>
+          <div style="margin-top:1rem;">
+            <label class="form-label-sm">Split Type</label>
+            <div style="display:flex;gap:1rem;margin-top:0.25rem;">
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+                <input type="radio" name="split_type" value="equal" checked onchange="toggleSplitInputs()"> Equal
+              </label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+                <input type="radio" name="split_type" value="custom" onchange="toggleSplitInputs()"> Custom
+              </label>
+            </div>
+          </div>
+          <div id="customSplitInputs" style="display:none;margin-top:1rem;">
+            <label class="form-label-sm">Amount per person</label>
+            {% for member in members %}
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+              <span style="min-width:120px;">{{ member.name }}</span>
+              <input class="form-input" type="number" name="split_amount_{{ member.id }}" step="0.01" min="0" placeholder="0.00" style="flex:1;"/>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--border);">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-primary-action">
+            <i class="bi bi-plus-circle-fill"></i> Add Expense
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSplitInputs() {
+  const splitType = document.querySelector('input[name="split_type"]:checked').value;
+  document.getElementById('customSplitInputs').style.display = splitType === 'custom' ? 'block' : 'none';
+}
+
+document.querySelector('input[name="expense_date"]').valueAsDate = new Date();
+
+document.getElementById('addExpenseModal').addEventListener('hidden.bs.modal', function () {
+  this.querySelector('form').reset();
+  document.getElementById('customSplitInputs').style.display = 'none';
+  document.querySelector('input[name="expense_date"]').valueAsDate = new Date();
+});
+</script>

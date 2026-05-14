@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, date
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy import func
@@ -265,6 +266,7 @@ def group_dashboard(group_id):
         categories=categories,
         transfers=transfers,
         total_spent=total_spent,
+        expense_categories=EXPENSE_CATEGORIES,
     )
 
 
@@ -382,6 +384,111 @@ def create_group():
         flash('Failed to create group. Please try again.', 'error')
 
     return redirect(url_for('main.index'))
+
+
+EXPENSE_CATEGORIES = ['Food', 'Transport', 'Accommodation', 'Entertainment', 'Utilities', 'Other']
+
+
+@main_bp.route('/groups/<int:group_id>/expenses/add', methods=['POST'])
+@login_required
+def add_expense(group_id):
+    membership = Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    description = request.form.get('description', '').strip()
+    amount_str = request.form.get('amount', '').strip()
+    category = request.form.get('category', '').strip()
+    date_str = request.form.get('expense_date', '').strip()
+    split_type = request.form.get('split_type', 'equal')
+
+    errors = []
+    if not description:
+        errors.append('Description is required.')
+
+    amount = None
+    if not amount_str:
+        errors.append('Amount is required.')
+    else:
+        try:
+            amount = float(amount_str)
+            if amount <= 0:
+                errors.append('Amount must be a positive number.')
+        except ValueError:
+            errors.append('Amount must be a valid number.')
+
+    if category not in EXPENSE_CATEGORIES:
+        errors.append('Please select a valid category.')
+
+    if split_type not in ('equal', 'custom'):
+        split_type = 'equal'
+
+    expense_date = date.today()
+    if date_str:
+        try:
+            expense_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            errors.append('Invalid date format.')
+
+    members = Membership.query.filter_by(group_id=group_id).all()
+
+    split_amounts = {}
+    if split_type == 'custom' and amount is not None:
+        total_split = 0.0
+        for m in members:
+            raw = request.form.get(f'split_amount_{m.user_id}', '0')
+            try:
+                share = round(float(raw), 2)
+            except ValueError:
+                errors.append('All split amounts must be valid numbers.')
+                break
+            if share < 0:
+                errors.append('Split amounts cannot be negative.')
+                break
+            split_amounts[m.user_id] = share
+            total_split += share
+        if not errors and abs(total_split - amount) > 0.01:
+            errors.append('Split amounts must add up to the total expense amount.')
+
+    if errors:
+        for e in errors:
+            flash(e, 'error')
+        return redirect(url_for('main.group_dashboard', group_id=group_id))
+
+    expense = Expense(
+        group_id=group_id,
+        paid_by=current_user.id,
+        description=description,
+        amount=amount,
+        category=category,
+        date=expense_date,
+        split_type=split_type,
+    )
+    db.session.add(expense)
+    db.session.flush()
+
+    if split_type == 'custom':
+        for m in members:
+            split = ExpenseSplit(
+                expense_id=expense.id,
+                user_id=m.user_id,
+                share_amount=split_amounts[m.user_id],
+            )
+            db.session.add(split)
+    else:
+        share = round(amount / len(members), 2)
+        for m in members:
+            split = ExpenseSplit(
+                expense_id=expense.id,
+                user_id=m.user_id,
+                share_amount=share,
+            )
+            db.session.add(split)
+
+    db.session.commit()
+
+    flash(f'Expense "{description}" added successfully!', 'success')
+    return redirect(url_for('main.group_dashboard', group_id=group_id))
 
 
 @main_bp.errorhandler(404)
