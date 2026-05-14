@@ -1756,4 +1756,73 @@
   .search-bar {
     display: none;
   }
+
+  /* Force single column for expense distribution and activity grids */
+  .archived-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Reduce gap between sections on mobile */
+  .page-body > * {
+    margin-bottom: 16px;
+  }
+
+  /* Login — reduce outer padding on mobile */
+  .login-container {
+    padding: 24px 16px;
+    min-height: unset;
+  }
+
+  /* Login — reduce card padding on mobile */
+  .login-card {
+    padding: 24px 20px;
+  }
+
+  /* Login — scale down login heading on mobile */
+  .login-heading {
+    font-size: 1.5rem;
+  }
+
+  /* Dashboard — constrain all cards to screen width */
+  .member-card,
+  .flow-table,
+  .distribution-card,
+  .balances-card,
+  .settlement-card {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* Dashboard — reduce card padding on mobile */
+  .member-card {
+    padding: 14px;
+  }
+
+  /* Dashboard — make flow table columns stack on mobile */
+  .flow-table-header {
+    display: none;
+  }
+
+  .flow-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  /* Dashboard — section headers smaller on mobile */
+  .section-header {
+    margin-bottom: 10px;
+  }
+
+  /* Dashboard — right panel full width on mobile */
+  .right-panel {
+    width: 100%;
+  }
+
+  /* Dashboard — reduce member card avatar size on mobile */
+  .avatar-md {
+    width: 34px;
+    height: 34px;
+    font-size: 0.7rem;
+  }
 }
