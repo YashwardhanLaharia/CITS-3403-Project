@@ -97,7 +97,7 @@ def login():
 
         if not errors:
             user = User.query.filter_by(email=email).first()
-        if user and user.status == 'active' and user.check_password(password):
+            if user and user.status == 'active' and user.check_password(password):
                 from flask_login import login_user
                 login_user(user, remember=bool(remember))
                 next_page = request.args.get('next')
@@ -196,7 +196,7 @@ def _compute_group_data(members_by_id, expenses):
     members = [
         {
             'id': uid,
-            'name': f'{user.first_name} {user.last_name}',
+            'name': user.display_name,
             'initials': f'{user.first_name[0]}{user.last_name[0]}'.upper(),
             'paid': paid_totals.get(uid, 0.0),
             'balance': paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0),
@@ -222,8 +222,8 @@ def _compute_group_data(members_by_id, expenses):
         creditor_id, credit = creditors[j]
         amount = min(debt, credit)
         transfers.append({
-            'from_name': f'{members_by_id[debtor_id].first_name} {members_by_id[debtor_id].last_name}',
-            'to_name': f'{members_by_id[creditor_id].first_name} {members_by_id[creditor_id].last_name}',
+            'from_name': members_by_id[debtor_id].display_name,
+            'to_name': members_by_id[creditor_id].display_name,
             'amount': round(amount, 2),
         })
         debtors[i][1] -= amount
@@ -299,7 +299,7 @@ def group_data(group_id):
                 'amount': float(e.amount),
                 'category': e.category,
                 'date': e.date.strftime('%Y-%m-%d'),
-                'paid_by': f'{e.payer.first_name} {e.payer.last_name}',
+                'paid_by': e.payer.display_name,
             }
             for e in expenses
         ],
