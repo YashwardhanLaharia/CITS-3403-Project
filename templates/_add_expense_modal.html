@@ -64,7 +64,7 @@
 
 <script>
 function toggleSplitInputs() {
-  const splitType = document.querySeletor('input[name="split_type"]:checked').value;
+  const splitType = document.querySelector('input[name="split_type"]:checked').value;
   document.getElementById('customSplitInputs').style.display = splitType === 'custom' ? 'block' : 'none';
 }
 </script>
