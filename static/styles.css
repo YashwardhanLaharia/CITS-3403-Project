@@ -181,7 +181,7 @@
     }
 
     /* ── PAGE BODY ── */
-    .page-body { padding: 36px 32px; flex: 1; }
+    .page-body { padding: 36px 56px; flex: 1; width: 100%; max-width: 2000px; margin: 0 auto; }
 
     /* ── WELCOME HEADER ── */
     .welcome-row {
@@ -642,6 +642,10 @@
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
     /* ── AUTH PAGES (login + signup) ── */
+
+    /* Hide sidebar on auth pages */
+    body:has(.login-left) .sidebar,
+    body:has(.login-left) .sidebar-backdrop { display: none; }
 
     /* Left brand panel */
     .login-left {
@@ -1773,20 +1777,28 @@
     margin-bottom: 16px;
   }
 
-  /* Login — reduce outer padding on mobile */
-  .login-container {
-    padding: 24px 16px;
-    min-height: unset;
+  /* Login/Signup — hide brand panel on mobile, form goes full screen */
+  .login-left {
+    display: none;
   }
 
-  /* Login — reduce card padding on mobile */
+  .login-right {
+    width: 100%;
+    padding: 24px 16px;
+    min-height: 100vh;
+  }
+
   .login-card {
     padding: 24px 20px;
+    max-width: 100%;
   }
 
-  /* Login — scale down login heading on mobile */
   .login-heading {
     font-size: 1.5rem;
+  }
+
+  .field-row-2 {
+    grid-template-columns: 1fr;
   }
 
   /* Dashboard — constrain all cards to screen width */
