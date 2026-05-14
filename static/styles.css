@@ -1622,6 +1622,16 @@
   .action-row {
     grid-template-columns: 1fr;
   }
+
+  /* Dashboard — 2 column member grid on tablet */
+  .members-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Dashboard — main grid stacks on tablet */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1661,5 +1671,26 @@
   /* Homepage — group cards single column on mobile */
   .groups-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Dashboard — main grid stacks on mobile */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Dashboard — member cards single column on mobile */
+  .members-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Dashboard — hero section stacks on mobile */
+  .group-hero {
+    flex-direction: column;
+  }
+
+  /* Dashboard — spending card full width on mobile */
+  .spending-card {
+    min-width: 0;
+    width: 100%;
   }
 }
