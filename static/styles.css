@@ -1736,10 +1736,16 @@
     padding: 12px 16px;
   }
 
+  /* Homepage/Dashboard — stack welcome row on mobile */
+  .welcome-row {
+    flex-direction: column;
+  }
+
   /* Spacing — reduce net balance card padding on mobile */
   .net-balance-card {
     padding: 12px 16px;
     width: 100%;
+    text-align: left;
   }
 
   /* Spacing — reduce spending card padding on mobile */
