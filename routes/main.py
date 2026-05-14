@@ -1,7 +1,7 @@
 import re
 from datetime import datetime, date
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user
 from sqlalchemy import func
 from extensions import db, login_manager
 from models import User, Group, Membership, Expense, ExpenseSplit
@@ -97,7 +97,7 @@ def login():
 
         if not errors:
             user = User.query.filter_by(email=email).first()
-            if user and user.check_password(password):
+        if user and user.status == 'active' and user.check_password(password):
                 from flask_login import login_user
                 login_user(user, remember=bool(remember))
                 next_page = request.args.get('next')
@@ -325,8 +325,6 @@ def group_data(group_id):
 @main_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    from flask_login import current_user
-
     if request.method == 'POST':
         first_name = request.form.get('first_name', '').strip()
         last_name = request.form.get('last_name', '').strip()
