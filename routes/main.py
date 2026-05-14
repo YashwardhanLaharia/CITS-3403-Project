@@ -478,7 +478,11 @@ def add_expense(group_id):
         except ValueError:
             errors.append('Invalid date format.')
 
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
     if errors:
+        if is_ajax:
+            return jsonify({'success': False, 'errors': errors}), 400
         for e in errors:
             flash(e, 'error')
         return redirect(url_for('main.group_dashboard', group_id=group_id))
@@ -506,6 +510,8 @@ def add_expense(group_id):
 
     db.session.commit()
 
+    if is_ajax:
+        return jsonify({'success': True})
     flash(f'Expense "{description}" added successfully!', 'success')
     return redirect(url_for('main.group_dashboard', group_id=group_id))
 
