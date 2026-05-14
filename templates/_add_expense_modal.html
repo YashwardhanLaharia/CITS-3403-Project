@@ -67,4 +67,6 @@ function toggleSplitInputs() {
   const splitType = document.querySelector('input[name="split_type"]:checked').value;
   document.getElementById('customSplitInputs').style.display = splitType === 'custom' ? 'block' : 'none';
 }
+
+document.querySelector('input[name="expense_date"]').valueAsDate = new Date();
 </script>
