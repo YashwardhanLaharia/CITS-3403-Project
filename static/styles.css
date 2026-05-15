@@ -1331,6 +1331,30 @@
 
     .view-split-btn:hover { background: var(--accent); color: #0c0f1a; }
 
+    /* Payment button */
+    .btn-settle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(61,217,164,0.2);
+      color: var(--accent);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: auto;
+    }
+
+    .btn-settle:hover {
+      background: var(--accent);
+      color: #0c0f1a;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
     /* ── MODAL ── */
     .modal-content {
       background: var(--bg-card);

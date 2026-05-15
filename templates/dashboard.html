@@ -147,6 +147,9 @@
             <div class="archived-name">{{ t.from_name }} → {{ t.to_name }}</div>
             <div class="archived-meta">${{ "%.2f"|format(t.amount) }}</div>
           </div>
+          <button class="btn-settle" data-from="{{ t.from_user_id }}" data-to="{{ t.to_user_id }}" data-amount="{{ t.amount }}">
+            <i class="bi bi-check-circle"></i> Mark Paid
+          </button>
         </div>
         {% endfor %}
       {% else %}
@@ -158,6 +161,23 @@
           </div>
         </div>
       {% endif %}
+    </div>
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Payment History</div>
+        <div class="section-sub">Completed settlements</div>
+      </div>
+    </div>
+
+    <div id="payment-history" class="archived-grid">
+      <div class="archived-card">
+        <div class="archived-icon"><i class="bi bi-clock-history"></i></div>
+        <div>
+          <div class="archived-name">Loading...</div>
+          <div class="archived-meta">Fetching payment history</div>
+        </div>
+      </div>
     </div>
 
   </div>
