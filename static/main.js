@@ -211,11 +211,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = e.target.closest('.btn-settle');
       if (!btn) return;
 
-      const fromUserId = btn.dataset.from;
-      const toUserId = btn.dataset.to;
+      const currentUserId = parseInt(document.querySelector('.page-body')?.dataset.currentUserId || '0', 10);
+      const fromUserId = parseInt(btn.dataset.from, 10);
+      const toUserId = parseInt(btn.dataset.to, 10);
       const amount = btn.dataset.amount;
 
-      const card = btn.closest('.archived-card');
+      const payerId = currentUserId === fromUserId ? fromUserId : (currentUserId === toUserId ? toUserId : fromUserId);
+      const payeeId = currentUserId === fromUserId ? toUserId : (currentUserId === toUserId ? fromUserId : toUserId);
+
+      if (currentUserId !== fromUserId && currentUserId !== toUserId) {
+        return;
+      }
+
       const match = window.location.pathname.match(/\/groups\/(\d+)/);
       if (!match) return;
       const groupId = match[1];
@@ -223,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = true;
       btn.innerHTML = '<i class="bi bi-hourglass-split"></i>...';
 
-      const result = await recordPayment(groupId, fromUserId, toUserId, amount);
+      const result = await recordPayment(groupId, payerId, payeeId, amount);
 
       if (result.success) {
         try {
