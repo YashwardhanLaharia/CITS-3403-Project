@@ -171,16 +171,21 @@ def logout():
     return redirect(url_for('main.login'))
 
 
-def _compute_group_data(members_by_id, expenses):
+def _compute_group_data(members_by_id, expenses, payments=None):
     """Compute per-member balances, category distribution, and settlement transfers.
 
     Returns (members, categories, transfers, total_spent).
     members dicts have keys: id, name, initials, paid, balance.
     categories dicts have keys: name, amount, pct.
-    transfers dicts have keys: from_name, to_name, amount.
+    transfers dicts have keys: from_user_id, to_user_id, from_name, to_name, amount.
     """
+    if payments is None:
+        payments = []
+
     paid_totals = {uid: 0.0 for uid in members_by_id}
     share_totals = {uid: 0.0 for uid in members_by_id}
+    paid_to_others = {uid: 0.0 for uid in members_by_id}
+    paid_by_others = {uid: 0.0 for uid in members_by_id}
     category_totals = {}
     total_spent = 0.0
 
@@ -193,13 +198,21 @@ def _compute_group_data(members_by_id, expenses):
         for split in expense.splits:
             share_totals[split.user_id] = share_totals.get(split.user_id, 0.0) + float(split.share_amount)
 
+    for payment in payments:
+        from_uid = payment.from_user_id
+        to_uid = payment.to_user_id
+        amount = float(payment.amount)
+        paid_to_others[from_uid] = paid_to_others.get(from_uid, 0.0) + amount
+        paid_by_others[to_uid] = paid_by_others.get(to_uid, 0.0) + amount
+
     members = [
         {
             'id': uid,
             'name': f'{user.first_name} {user.last_name}',
             'initials': f'{user.first_name[0]}{user.last_name[0]}'.upper(),
             'paid': paid_totals.get(uid, 0.0),
-            'balance': paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0),
+            'balance': (paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
+                        - paid_to_others.get(uid, 0.0) + paid_by_others.get(uid, 0.0)),
         }
         for uid, user in members_by_id.items()
     ]
@@ -209,8 +222,8 @@ def _compute_group_data(members_by_id, expenses):
         for cat, amount in sorted(category_totals.items(), key=lambda x: -x[1])
     ]
 
-    # Greedy settlement: repeatedly match largest debtor with largest creditor
-    raw_balances = {uid: paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
+    raw_balances = {uid: (paid_totals.get(uid, 0.0) - share_totals.get(uid, 0.0)
+                          - paid_to_others.get(uid, 0.0) + paid_by_others.get(uid, 0.0))
                     for uid in members_by_id}
     creditors = [[uid, bal] for uid, bal in sorted(raw_balances.items(), key=lambda x: -x[1]) if bal > 0.005]
     debtors = [[uid, -bal] for uid, bal in sorted(raw_balances.items(), key=lambda x: x[1]) if bal < -0.005]
@@ -222,6 +235,8 @@ def _compute_group_data(members_by_id, expenses):
         creditor_id, credit = creditors[j]
         amount = min(debt, credit)
         transfers.append({
+            'from_user_id': debtor_id,
+            'to_user_id': creditor_id,
             'from_name': f'{members_by_id[debtor_id].first_name} {members_by_id[debtor_id].last_name}',
             'to_name': f'{members_by_id[creditor_id].first_name} {members_by_id[creditor_id].last_name}',
             'amount': round(amount, 2),
@@ -246,8 +261,9 @@ def group_dashboard(group_id):
     group = membership.group
     members_by_id = {m.user_id: m.user for m in Membership.query.filter_by(group_id=group_id).all()}
     expenses = Expense.query.filter_by(group_id=group_id).order_by(Expense.date.desc()).all()
+    payments = Payment.query.filter_by(group_id=group_id).all()
 
-    members, categories, transfers, total_spent = _compute_group_data(members_by_id, expenses)
+    members, categories, transfers, total_spent = _compute_group_data(members_by_id, expenses, payments)
 
     return render_template(
         'dashboard.html',
@@ -271,8 +287,9 @@ def group_data(group_id):
     group = Group.query.get_or_404(group_id)
     members_by_id = {m.user_id: m.user for m in Membership.query.filter_by(group_id=group_id).all()}
     expenses = Expense.query.filter_by(group_id=group_id).order_by(Expense.date.desc()).all()
+    payments = Payment.query.filter_by(group_id=group_id).all()
 
-    members, categories, transfers, total_spent = _compute_group_data(members_by_id, expenses)
+    members, categories, transfers, total_spent = _compute_group_data(members_by_id, expenses, payments)
 
     return jsonify({
         'group': {
@@ -313,11 +330,25 @@ def group_data(group_id):
         ],
         'transfers': [
             {
+                'from_user_id': t['from_user_id'],
+                'to_user_id': t['to_user_id'],
                 'from': t['from_name'],
                 'to': t['to_name'],
                 'amount': t['amount'],
             }
             for t in transfers
+        ],
+        'payments': [
+            {
+                'id': p.id,
+                'from_user_id': p.from_user_id,
+                'from_name': f'{p.from_user.first_name} {p.from_user.last_name}',
+                'to_user_id': p.to_user_id,
+                'to_name': f'{p.to_user.first_name} {p.to_user.last_name}',
+                'amount': float(p.amount),
+                'created_at': p.created_at.isoformat(),
+            }
+            for p in payments
         ],
     })
 
