@@ -91,7 +91,57 @@ function renderSettlement(transfers) {
         <div class="archived-name">${t.from} → ${t.to}</div>
         <div class="archived-meta">$${t.amount.toFixed(2)}</div>
       </div>
+      <button class="btn-settle" data-from="${t.from_user_id}" data-to="${t.to_user_id}" data-amount="${t.amount}">
+        <i class="bi bi-check-circle"></i> Mark Paid
+      </button>
     </div>`).join('');
+}
+
+function renderPaymentHistory(payments) {
+  const container = document.getElementById('payment-history');
+  if (!container) return;
+  if (!payments.length) {
+    container.innerHTML = `
+      <div class="archived-card">
+        <div class="archived-icon"><i class="bi bi-clock-history"></i></div>
+        <div>
+          <div class="archived-name">No payments yet</div>
+          <div class="archived-meta">Settle up using the buttons above</div>
+        </div>
+      </div>`;
+    return;
+  }
+  container.innerHTML = payments.map(p => {
+    const [year, month, day, hour, min] = p.created_at.split(/[-T:]/);
+    const d = new Date(year, month - 1, day, hour, min);
+    const dateStr = d.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+    return `
+      <div class="archived-card">
+        <div class="archived-icon"><i class="bi bi-check-circle-fill" style="color:var(--accent);"></i></div>
+        <div>
+          <div class="archived-name">${p.from_name} → ${p.to_name}</div>
+          <div class="archived-meta">$${p.amount.toFixed(2)} · ${dateStr}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function recordPayment(groupId, fromUserId, toUserId, amount) {
+  const csrfToken = document.querySelector('[name=csrf_token]')?.value || '';
+  const response = await fetch(`/groups/${groupId}/payments/add`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({
+      from_user_id: fromUserId,
+      to_user_id: toUserId,
+      amount: amount,
+    }),
+  });
+  const data = await response.json();
+  return data;
 }
 
 function renderGroupSummary(group, memberCount) {
@@ -103,9 +153,8 @@ function renderGroupSummary(group, memberCount) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('addExpenseForm');
-  if (!form) return;
-
-  form.addEventListener('submit', async (e) => {
+  if (form) {
+    form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const csrfToken = form.querySelector('[name=csrf_token]').value;
@@ -150,9 +199,50 @@ document.addEventListener('DOMContentLoaded', () => {
       renderMemberBalances(fresh.members);
       renderExpenseFeed(fresh.expenses);
       renderSettlement(fresh.transfers);
+      renderPaymentHistory(fresh.payments);
       renderGroupSummary(fresh.group, fresh.members.length);
     } catch {
       // Data fetch failed — page still functional, data will update on next reload
     }
+  });
+
+  document.querySelectorAll('.archived-grid').forEach(grid => {
+    grid.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.btn-settle');
+      if (!btn) return;
+
+      const fromUserId = btn.dataset.from;
+      const toUserId = btn.dataset.to;
+      const amount = btn.dataset.amount;
+
+      const card = btn.closest('.archived-card');
+      const match = window.location.pathname.match(/\/groups\/(\d+)/);
+      if (!match) return;
+      const groupId = match[1];
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="bi bi-hourglass-split"></i>...';
+
+      const result = await recordPayment(groupId, fromUserId, toUserId, amount);
+
+      if (result.success) {
+        try {
+          const fresh = await fetch(`/groups/${groupId}/data`).then(r => r.json());
+          renderMemberBalances(fresh.members);
+          renderSettlement(fresh.transfers);
+          renderPaymentHistory(fresh.payments);
+        } catch {
+          window.location.reload();
+        }
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check-circle"></i> Mark Paid';
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-danger';
+        toast.textContent = result.errors?.[0] || 'Payment failed';
+        document.querySelector('.page-body')?.prepend(toast);
+        setTimeout(() => toast.remove(), 4000);
+      }
+    });
   });
 });
