@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
 from config import config
-from extensions import db, login_manager
+from extensions import db, login_manager, limiter
 
 load_dotenv()
 
@@ -27,6 +27,7 @@ def create_app(config_name=None):
     migrate.init_app(app, db)
     csrf.init_app(app)
     login_manager.init_app(app)
+    limiter.init_app(app)
 
     from routes.main import main_bp
     app.register_blueprint(main_bp)

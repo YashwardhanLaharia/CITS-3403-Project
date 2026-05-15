@@ -1,9 +1,9 @@
 import re
 from datetime import datetime, date
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, request as flask_request
 from flask_login import login_required, current_user
 from sqlalchemy import func
-from extensions import db, login_manager
+from extensions import db, login_manager, limiter
 from models import User, Group, Membership, Expense, ExpenseSplit
 
 main_bp = Blueprint('main', __name__)
@@ -261,8 +261,13 @@ def group_dashboard(group_id):
     )
 
 
+def get_user_id():
+    return str(current_user.id) if current_user.is_authenticated else flask_request.remote_addr
+
+
 @main_bp.route('/groups/<int:group_id>/data')
 @login_required
+@limiter.limit("100 per minute", key_func=get_user_id)
 def group_data(group_id):
     Membership.query.filter_by(
         group_id=group_id, user_id=current_user.id
