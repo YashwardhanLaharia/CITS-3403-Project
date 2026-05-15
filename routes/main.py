@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from sqlalchemy import func
 from extensions import db, login_manager
-from models import User, Group, Membership, Expense, ExpenseSplit
+from models import User, Group, Membership, Expense, ExpenseSplit, Payment
 
 main_bp = Blueprint('main', __name__)
 
@@ -550,6 +550,80 @@ def add_expense(group_id):
         return jsonify({'success': True})
     flash(f'Expense "{description}" added successfully!', 'success')
     return redirect(url_for('main.group_dashboard', group_id=group_id))
+
+
+@main_bp.route('/groups/<int:group_id>/payments/add', methods=['POST'])
+@login_required
+def record_payment(group_id):
+    membership = Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    data = request.get_json() or {}
+    from_user_id = data.get('from_user_id')
+    to_user_id = data.get('to_user_id')
+    amount_str = data.get('amount')
+
+    errors = []
+
+    if not from_user_id:
+        errors.append('Payer is required.')
+    if not to_user_id:
+        errors.append('Recipient is required.')
+    if not amount_str:
+        errors.append('Amount is required.')
+    else:
+        try:
+            amount = round(float(amount_str), 2)
+            if amount <= 0:
+                errors.append('Amount must be a positive number.')
+        except ValueError:
+            errors.append('Amount must be a valid number.')
+
+    if errors:
+        return jsonify({'success': False, 'errors': errors}), 400
+
+    from_member = Membership.query.filter_by(group_id=group_id, user_id=from_user_id).first()
+    to_member = Membership.query.filter_by(group_id=group_id, user_id=to_user_id).first()
+
+    if not from_member or not to_member:
+        return jsonify({'success': False, 'errors': ['Invalid users.']}), 400
+
+    payment = Payment(
+        group_id=group_id,
+        from_user_id=from_user_id,
+        to_user_id=to_user_id,
+        amount=amount,
+    )
+    db.session.add(payment)
+    db.session.commit()
+
+    return jsonify({'success': True})
+
+
+@main_bp.route('/groups/<int:group_id>/payments')
+@login_required
+def get_payments(group_id):
+    membership = Membership.query.filter_by(
+        group_id=group_id, user_id=current_user.id
+    ).first_or_404()
+
+    payments = Payment.query.filter_by(group_id=group_id).order_by(Payment.created_at.desc()).all()
+
+    return jsonify({
+        'payments': [
+            {
+                'id': p.id,
+                'from_user_id': p.from_user_id,
+                'from_name': f'{p.from_user.first_name} {p.from_user.last_name}',
+                'to_user_id': p.to_user_id,
+                'to_name': f'{p.to_user.first_name} {p.to_user.last_name}',
+                'amount': float(p.amount),
+                'created_at': p.created_at.isoformat(),
+            }
+            for p in payments
+        ]
+    })
 
 
 @main_bp.errorhandler(404)
